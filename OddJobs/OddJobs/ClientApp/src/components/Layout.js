@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Container } from 'reactstrap';
-import { NavMenu } from './NavMenu';
+import {Col, Container, Row} from 'reactstrap';
+import SideBar from './NavMenu';
 
 export class Layout extends Component {
   static displayName = Layout.name;
@@ -8,10 +8,16 @@ export class Layout extends Component {
   render () {
     return (
       <div>
-        <NavMenu />
-        <Container>
-          {this.props.children}
-        </Container>
+          <Container fluid>
+              <Row style={{height: "100vh"}}>
+                  <Col md={2} className={"bg-dark"}>
+                      <SideBar />
+                  </Col>
+                  <Col md={9}>
+                      {this.props.children}
+                  </Col>
+              </Row>
+          </Container>
       </div>
     );
   }
