@@ -15,7 +15,7 @@ import SubMenu from "./SubMenu";
 
 
 const SideBar = ({ isOpen, toggle }) => (
-    <div className={classNames( "text-white", "sidebar", { "is-open": isOpen })}>
+    <div className={classNames(  "sidebar", { "is-open": isOpen })}>
       <div className="sidebar-header">
       {/*<span color="info" onClick={toggle} style={{ color: "#fff" }}>*/}
       {/*  &times;*/}
@@ -23,7 +23,7 @@ const SideBar = ({ isOpen, toggle }) => (
         <h3>Bootstrap Sidebar</h3>
       </div>
       <div className="side-menu">
-        <Nav vertical className="list-unstyled pb-3">
+        <Nav color="dark" vertical className="list-unstyled pb-3">
           <p>Dummy Heading</p>
           <SubMenu title="Home" icon={faHome} items={submenus[0]} />
           <NavItem>
