@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Col, Container, Row} from 'reactstrap';
-import SideBar from './NavMenu';
+import SideBar from './SideMenu';
+import NavMenu from "./NavMenu";
 import Map from './LeafletMap';
 
 export class Layout extends Component {
@@ -10,11 +11,15 @@ export class Layout extends Component {
     return (
       <div>
           <Container fluid>
+              <Row>
+                  <NavMenu />
+              </Row>
               <Row style={{height: "100vh"}}>
-                  <Col md={2} className={"bg-dark"}>
+                  <Col md={1} className={"bg-dark"}>
                       <SideBar />
                   </Col>
-                  <Col md={9}>
+                  <Col md={11}>
+                      {this.props.children}
                       <div style={{width:'100%', height: '100%'}}><Map/> </div>
                   </Col>
               </Row>
