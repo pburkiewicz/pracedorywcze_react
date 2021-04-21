@@ -1,14 +1,8 @@
 import React from "react";
 
-import { MapContainer,
-    TileLayer,
-    Marker,
-    Popup
-} from 'react-leaflet'
+import L from 'leaflet';
 
-require('react-dom');
-window.React2 = require('react');
-console.log(window.React1 === window.React2);
+import 'leaflet/dist/leaflet.css';
 
 class Map extends React.Component {
     constructor(props) {
@@ -20,18 +14,23 @@ class Map extends React.Component {
     }
     
     
+    componentDidMount() {
+        this.map();
+    }
+    
+    map() {
+        const map = L.map('map').setView(this.state.position, this.state.zoom);
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+    }
+    
+    
+
     render() {
-        return (<MapContainer  placeholder center={this.state.position} zoom={this.state.zoom} >
-            <TileLayer
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={this.state.position}>
-                <Popup>
-                    A pretty CSS3 popup. <br/> Easily customizable.
-                </Popup>
-            </Marker>
-        </MapContainer>)
+        return <div id="map" style={{width:'100%', height: '100%'}}>xx</div>
     }
 }
 
