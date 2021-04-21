@@ -1,5 +1,14 @@
 import React from "react";
 
+import { MapContainer,
+    TileLayer,
+    Marker,
+    Popup
+} from 'react-leaflet'
+
+require('react-dom');
+window.React2 = require('react');
+console.log(window.React1 === window.React2);
 
 class Map extends React.Component {
     constructor(props) {
@@ -12,7 +21,7 @@ class Map extends React.Component {
     
     
     render() {
-        <MapContainer center={this.state.position} zoom={this.state.zoom} scrollWheelZoom={false}>
+        return (<MapContainer  placeholder center={this.state.position} zoom={this.state.zoom} >
             <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -22,7 +31,7 @@ class Map extends React.Component {
                     A pretty CSS3 popup. <br/> Easily customizable.
                 </Popup>
             </Marker>
-        </MapContainer>
+        </MapContainer>)
     }
 }
 

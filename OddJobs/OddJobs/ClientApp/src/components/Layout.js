@@ -15,8 +15,7 @@ export class Layout extends Component {
                       <SideBar />
                   </Col>
                   <Col md={9}>
-                      {/*{this.props.children}*/}
-                      <Map />
+                      <div style={{width:'100%', height: '100%'}}><Map/> </div>
                   </Col>
               </Row>
           </Container>
