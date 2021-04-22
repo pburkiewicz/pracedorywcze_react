@@ -23,11 +23,12 @@ const NavMenu = (props) => {
 
     return (
             <Navbar color="dark" dark expand="md" className={"w-100 p-0"}>
-                <div className={"col-md-2 m-0 p-2 pl-3 d-flex align-items-center"} style={{background: "#1f1e1e"}}>
+                <div className={"col-md-1 m-0 p-2 pl-0 d-flex align-items-center"} style={{background: "#1f1e1e"}}>
                                         
-                    <FontAwesomeIcon icon={faBriefcase} className="mr-2" size="2x" style={{color: "#FFF"}} />
-                    <NavbarBrand href="/">Prace Dorywcze</NavbarBrand>
+                    <FontAwesomeIcon icon={faBriefcase} className="mx-auto" size="4x" style={{color: "#d5d5d5"}} />
+                    
                 </div>
+                <NavbarBrand href="/"  className={"col-md-1 pl-2"} style={{color: "#d5d5d5"}}>Prace Dorywcze</NavbarBrand>
                 {/*<NavbarToggler onClick={toggle} />*/}
                 <Collapse isOpen={isOpen} navbar className={"p-2 pr-3"}>
                     <Nav className="ml-auto" navbar>
