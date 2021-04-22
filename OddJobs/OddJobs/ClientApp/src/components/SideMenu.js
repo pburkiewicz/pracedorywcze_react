@@ -1,87 +1,92 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faHome,
-  faBriefcase,
-  faPaperPlane,
-  faQuestion,
+  faUserAlt,
+  faList,
+  faMapMarkedAlt,
+  faEnvelope,
+  faPlus,
   faImage,
   faCopy,
 } from "@fortawesome/free-solid-svg-icons";
-import { NavItem, NavLink, Nav } from "reactstrap";
+import {NavItem, NavLink, Nav, Row, Col, Container, Navbar} from "reactstrap";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 import SubMenu from "./SubMenu";
 
 
 const SideBar = ({ isOpen, toggle }) => (
-    <div className={classNames(  "sidebar", { "is-open": isOpen })}>
-      <div className="sidebar-header">
-      {/*<span color="info" onClick={toggle} style={{ color: "#fff" }}>*/}
-      {/*  &times;*/}
-      {/*</span>*/}
-        <h3>Bootstrap Sidebar</h3>
-      </div>
+    <div >
       <div className="side-menu">
-        <Nav color="dark" vertical className="list-unstyled pb-3">
-          <p>Dummy Heading</p>
-          <SubMenu title="Home" icon={faHome} items={submenus[0]} />
-          <NavItem>
-            <NavLink tag={Link} to={"/about"}>
-              <FontAwesomeIcon icon={faBriefcase} className="mr-2" />
-              About
+        <Nav color="dark" vertical className="">
+          <NavItem className={"w-100"} color="dark" dark>
+            <NavLink tag={Link} to={"/add"} className={"p-0 pt-2"} style={{color: '#d5d5d5', textDecoration: 'none'}} >
+              <Row>
+                <Col md={12} className={"d-flex justify-content-center"}>
+                  <FontAwesomeIcon icon={faPlus} size={"3x"} />
+                </Col>
+                <Col md={12} className={"d-flex justify-content-center"}>
+                  <p>Dodaj</p>
+                </Col>
+              </Row>
             </NavLink>
           </NavItem>
-          <SubMenu title="Pages" icon={faCopy} items={submenus[1]} />
-          <NavItem>
-            <NavLink tag={Link} to={"/pages"}>
-              <FontAwesomeIcon icon={faImage} className="mr-2" />
-              Portfolio
+          <NavItem className={"w-100"}>
+            <NavLink tag={Link} to={"/map"} className={"p-0 pt-2"} style={{color: '#d5d5d5', textDecoration: 'none'}} >
+              <Row>
+                <Col md={12} className={"d-flex justify-content-center"}>
+                  <FontAwesomeIcon icon={faMapMarkedAlt} size={"3x"} />
+                </Col>
+                <Col md={12} className={"d-flex justify-content-center"}>
+                  <p>Mapa</p>
+                </Col>
+              </Row>
             </NavLink>
           </NavItem>
-          <NavItem>
-            <NavLink tag={Link} to={"/faq"}>
-              <FontAwesomeIcon icon={faQuestion} className="mr-2" />
-              FAQ
+          
+          <NavItem className={"w-100"}>
+            <NavLink tag={Link} to={"/list"} className={"p-0 pt-2"} style={{color: '#d5d5d5', textDecoration: 'none'}} >
+              <Row>
+                <Col md={12} className={"d-flex justify-content-center"}>
+                  <FontAwesomeIcon icon={faList} size={"3x"} />
+                </Col>
+                <Col md={12} className={"d-flex justify-content-center"}>
+                  <p>Lista</p>
+                </Col>
+              </Row>
             </NavLink>
           </NavItem>
-          <NavItem>
-            <NavLink tag={Link} to={"/contact"}>
-              <FontAwesomeIcon icon={faPaperPlane} className="mr-2" />
-              Contact
+
+          <NavItem className={"w-100"}>
+            <NavLink tag={Link} to={"/messages"} className={"p-0 pt-2"} style={{color: '#d5d5d5', textDecoration: 'none'}} >
+              <Row>
+                <Col md={12} className={"d-flex justify-content-center"}>
+                  <FontAwesomeIcon icon={faEnvelope} size={"3x"} />
+                </Col>
+                <Col md={12} className={"d-flex justify-content-center"}>
+                  <p>Wiadomości</p>
+                </Col>
+              </Row>
             </NavLink>
           </NavItem>
+
+          <NavItem className={"w-100"}>
+            <NavLink tag={Link} to={"/user"} className={"p-0 pt-2"} style={{color: '#d5d5d5', textDecoration: 'none'}} >
+              <Row>
+                <Col md={12} className={"d-flex justify-content-center"}>
+                  <FontAwesomeIcon icon={faUserAlt} size={"3x"} />
+                </Col>
+                <Col md={12} className={"d-flex justify-content-center"}>
+                  <p>Użytkownik</p>
+                </Col>
+              </Row>
+            </NavLink>
+          </NavItem>
+          
         </Nav>
       </div>
     </div>
 );
-
-const submenus = [
-  [
-    {
-      title: "Home 1",
-      target: "Home-1",
-    },
-    {
-      title: "Home 2",
-      target: "Home-2",
-    },
-    {
-      itle: "Home 3",
-      target: "Home-3",
-    },
-  ],
-  [
-    {
-      title: "Page 1",
-      target: "Page-1",
-    },
-    {
-      title: "Page 2",
-      target: "Page-2",
-    },
-  ],
-];
 
 export default SideBar;
 

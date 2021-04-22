@@ -14,10 +14,10 @@ export class Layout extends Component {
                   <NavMenu />
               </Row>
               <Row style={{height: "100vh"}}>
-                  <Col md={2} className={"bg-dark"}>
+                  <Col md={1} className={"bg-dark"}>
                       <SideBar />
                   </Col>
-                  <Col md={10}>
+                  <Col md={11}>
                       {this.props.children}
                   </Col>
               </Row>
