@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {Col, Container, Row} from 'reactstrap';
 import SideBar from './SideMenu';
 import NavMenu from "./NavMenu";
-import Map from './LeafletMap';
 
 export class Layout extends Component {
   static displayName = Layout.name;
