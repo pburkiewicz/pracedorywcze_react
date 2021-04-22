@@ -18,9 +18,8 @@ export class Layout extends Component {
                   <Col md={1} className={"bg-dark"}>
                       <SideBar />
                   </Col>
-                  <Col md={11}>
+                  <Col md={11} className={"p-0"}>
                       {this.props.children}
-                      <div style={{width:'100%', height: '100%'}}><Map/> </div>
                   </Col>
               </Row>
           </Container>
