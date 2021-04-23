@@ -9,15 +9,15 @@ export class Layout extends Component {
   render () {
     return (
       <div>
-          <Container fluid>
-              <Row>
+          <Container fluid style={{height: "100vh"}}>
+              <Row style={{height: "10vh"}}>
                   <NavMenu />
               </Row>
-              <Row style={{height: "100vh"}}>
-                  <Col md={1} className={"bg-dark"}>
+              <Row style={{height: "90vh"}}>
+                  <Col className={"bg-dark"} style={{maxWidth: "10vh"}}>
                       <SideBar />
                   </Col>
-                  <Col md={11} className={"p-0"}>
+                  <Col className={"p-0"} >
                       {this.props.children}
                   </Col>
               </Row>
