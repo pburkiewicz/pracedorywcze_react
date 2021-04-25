@@ -8,25 +8,43 @@ class Map extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            position: [51.505, -0.09],
-            zoom: 13
+            position: [51.981497, 20.143433],
+            zoom: 7,
+            markers: [],
+            bounds: null
         };
+
+        this.OnUpdateMarkers = this.OnUpdateMarkers.bind(this);
     }
-    
+    //moveend, zoomend
     
     componentDidMount() {
         this.map();
     }
     
     map() {
-        const map = L.map('map').setView(this.state.position, this.state.zoom);
-
+        this.mapBox = L.map('map').setView(this.state.position, this.state.zoom);
+        this.mapBox.locate({setView : true});
+        this.mapBox.on('moveend',this.OnUpdateMarkers);
+        
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        
+        }).addTo(this.mapBox);
+        this.OnUpdateMarkers();
     }
     
+    OnUpdateMarkers()
+    {
+        const bounds = this.mapBox.getBounds();
+        const zoom = this.mapBox.getZoom()
+        const position = this.mapBox.getCenter();
+        console.log('bounds '+ bounds.toBBoxString() + "\nzoom "+ zoom + "\nposition " + position);
+        this.setState({
+            bounds: bounds,
+            zoom: zoom,
+            position: position
+        });
+    }
     
 
     render() {
