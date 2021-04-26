@@ -1,6 +1,6 @@
 using System;
 
-namespace OddJobs
+namespace OddJobs.Models
 {
     public class WeatherForecast
     {

@@ -8,5 +8,9 @@ namespace OddJobs.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public List<JobOrder> JobOrders;
+        
+        public List<JobOrder> JobsDone;
+        
     }
 }

@@ -31,7 +31,7 @@ namespace OddJobs
                 options.UseNpgsql(
                     Configuration.GetConnectionString("DefaultConnection"), options =>
                     {
-                        options.SetPostgresVersion(new Version("9.5"));
+                        options.SetPostgresVersion(new Version("12.6"));
                     })
             );
 

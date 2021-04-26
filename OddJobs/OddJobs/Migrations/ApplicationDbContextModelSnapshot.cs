@@ -320,6 +320,56 @@ namespace OddJobs.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("OddJobs.Models.JobOrder", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpirationTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("PrincipalId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("RegisteredTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("Reported")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("WorkerId")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("PrincipalId");
+
+                    b.HasIndex("WorkerId");
+
+                    b.HasIndex("Latitude", "Longitude");
+
+                    b.ToTable("JobOrders");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -369,6 +419,23 @@ namespace OddJobs.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("OddJobs.Models.JobOrder", b =>
+                {
+                    b.HasOne("OddJobs.Models.ApplicationUser", "Principal")
+                        .WithMany()
+                        .HasForeignKey("PrincipalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OddJobs.Models.ApplicationUser", "Worker")
+                        .WithMany()
+                        .HasForeignKey("WorkerId");
+
+                    b.Navigation("Principal");
+
+                    b.Navigation("Worker");
                 });
 #pragma warning restore 612, 618
         }
