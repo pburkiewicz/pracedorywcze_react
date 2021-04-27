@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {Col, Container, Row} from 'reactstrap';
 import SideBar from './SideMenu';
 import NavMenu from "./NavMenu";
+import {Login} from "./api-authorization/Login";
+import {LoginActions} from "./api-authorization/ApiAuthorizationConstants";
 
 export class Layout extends Component {
   static displayName = Layout.name;

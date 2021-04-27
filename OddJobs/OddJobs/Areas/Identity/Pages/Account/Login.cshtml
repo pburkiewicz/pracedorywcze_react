@@ -1,0 +1,33 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Logowanie";
+}
+
+<div class="row">
+    <div class="login-form login-register-form">    
+        <form id="account" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="avatar"><i class="fa fa-user"></i></div>
+            <h4 class="modal-title">Zaloguj się</h4>
+            <div class="form-group">
+                <input asp-for="Input.Email" type="text" class="form-control" placeholder="Email" required="required">
+            </div>
+            <div class="form-group">
+                <input asp-for="Input.Password" type="password" class="form-control" placeholder="Password" required="required">
+            </div>
+            <div class="form-group small clearfix">
+                <label class="checkbox-inline">
+                    <input asp-for="Input.RememberMe"/>
+                    Zapamiętaj mnie</label>
+            </div>
+            <input type="submit" class="btn btn-primary btn-block btn-lg" value="Zaloguj">
+        </form>			
+        <div class="text-center small">Nie masz konta?<a asp-page="./Register"  asp-route-returnUrl="@Model.ReturnUrl">Zarejestruj się</a></div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
