@@ -40,7 +40,7 @@ class Map extends React.Component {
         const bounds = this.mapBox.getBounds();
         const zoom = this.mapBox.getZoom()
         const position = this.mapBox.getCenter();
-        console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
+        //console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
         if (zoom < 10) {
             this.markerLayer.clearLayers();
             return;
@@ -53,7 +53,7 @@ class Map extends React.Component {
         const response = await fetch("jobOrder/fetchData/" + bounds.getWest() + "/" + bounds.getEast() + "/" + bounds.getNorth() + "/" + bounds.getSouth());
         const jobs =await response.json();
         this.markerLayer.clearLayers();
-        console.log(jobs);
+        //console.log(jobs);
         this.addIcons(jobs);
     }
     
