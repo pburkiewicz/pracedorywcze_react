@@ -1,9 +1,8 @@
 import React from "react";
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import {greenIcon, redIcon, goldIcon} from './Icons'
 
-import 'leaflet.locatecontrol';
+import L from 'leaflet';
+
+import 'leaflet/dist/leaflet.css';
 
 class Map extends React.Component {
     constructor(props) {
