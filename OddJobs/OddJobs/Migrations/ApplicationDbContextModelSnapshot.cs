@@ -264,9 +264,6 @@ namespace OddJobs.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("City")
-                        .HasColumnType("text");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -277,18 +274,6 @@ namespace OddJobs.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<long>("FlatNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("HouseNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -316,18 +301,12 @@ namespace OddJobs.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
-                    b.Property<string>("Street")
-                        .HasColumnType("text");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
-
-                    b.Property<string>("ZipCode")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

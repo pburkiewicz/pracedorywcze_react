@@ -4,6 +4,10 @@ import L from 'leaflet';
 
 import 'leaflet/dist/leaflet.css';
 
+import {greenIcon} from "./Icons"
+
+import 'leaflet.locatecontrol';
+
 class Map extends React.Component {
     constructor(props) {
         super(props)
