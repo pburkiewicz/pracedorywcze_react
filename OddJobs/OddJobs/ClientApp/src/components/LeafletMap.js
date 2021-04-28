@@ -27,7 +27,7 @@ class Map extends React.Component {
     map() {
         this.mapBox = L.map('map').setView(this.state.position, this.state.zoom);
         this.mapBox.locate({setView : true});
-        L.control.locate({icon: "TO I TAK NIE DZIAŁA..."}).addTo(this.mapBox);
+        L.control.locate().addTo(this.mapBox);
         this.mapBox.on('moveend',this.OnUpdateMarkers);
         this.markerLayer = L.layerGroup().addTo(this.mapBox);
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
