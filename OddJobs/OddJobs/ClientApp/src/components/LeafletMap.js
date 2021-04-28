@@ -3,6 +3,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {greenIcon, redIcon, goldIcon} from './Icons'
 
+import 'leaflet.locatecontrol';
+
 class Map extends React.Component {
     constructor(props) {
         super(props)
@@ -22,6 +24,7 @@ class Map extends React.Component {
     map() {
         this.mapBox = L.map('map').setView(this.state.position, this.state.zoom);
         this.mapBox.locate({setView : true});
+        L.control.locate({icon: "TO I TAK NIE DZIAŁA..."}).addTo(this.mapBox);
         this.mapBox.on('moveend',this.OnUpdateMarkers);
         this.markerLayer = L.layerGroup().addTo(this.mapBox);
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -30,29 +33,40 @@ class Map extends React.Component {
         this.OnUpdateMarkers();
     }
     
-    OnUpdateMarkers()
-    {
+    async OnUpdateMarkers() {
         const bounds = this.mapBox.getBounds();
         const zoom = this.mapBox.getZoom()
         const position = this.mapBox.getCenter();
-        console.log('bounds '+ bounds.toBBoxString() + "\nzoom "+ zoom + "\nposition " + position);
-        if (zoom<=10) return;
+        console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
+        if (zoom < 10) {
+            this.markerLayer.clearLayers();
+            return;
+        }
         this.setState({
             bounds: bounds,
             zoom: zoom,
             position: position
         });
-        //database comunication
-        // jobs = fetch()
+        const response = await fetch("jobOrder/fetchData/" + bounds.getWest() + "/" + bounds.getEast() + "/" + bounds.getNorth() + "/" + bounds.getSouth());
+        const jobs =await response.json();
         this.markerLayer.clearLayers();
-        //addIcons(jobs)
-        L.marker([50.203059, 18.989359],{icon: greenIcon}).addTo( this.markerLayer);
+        console.log(jobs);
+        this.addIcons(jobs);
     }
     
+    addIcons(icons)
+    {
+        icons.forEach((item, index) =>
+        {
+            L.marker([item['latitude'], item['longitude']], {icon: greenIcon}).addTo(this.markerLayer);
+        })
+    }
 
     render() {
         return <div id="map" style={{width:'100%', height: '100%'}}>xx</div>
     }
 }
+
+
 
 export default Map;
