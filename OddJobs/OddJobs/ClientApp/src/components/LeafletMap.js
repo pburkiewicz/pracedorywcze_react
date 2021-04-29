@@ -1,12 +1,10 @@
 import React from "react";
-
 import L from 'leaflet';
-
 import 'leaflet/dist/leaflet.css';
-
 import {greenIcon} from "./Icons"
-
 import 'leaflet.locatecontrol';
+import Popup from "./Popup"
+import ReactDOMServer from 'react-dom/server';
 
 class Map extends React.Component {
     constructor(props) {
@@ -53,7 +51,7 @@ class Map extends React.Component {
         const response = await fetch("jobOrder/fetchData/" + bounds.getWest() + "/" + bounds.getEast() + "/" + bounds.getNorth() + "/" + bounds.getSouth());
         const jobs =await response.json();
         this.markerLayer.clearLayers();
-        //console.log(jobs);
+        console.log(jobs);
         this.addIcons(jobs);
     }
     
@@ -61,7 +59,8 @@ class Map extends React.Component {
     {
         icons.forEach((item, index) =>
         {
-            L.marker([item['latitude'], item['longitude']], {icon: greenIcon}).addTo(this.markerLayer);
+            const marker = L.marker([item['latitude'], item['longitude']], {icon: greenIcon}).addTo(this.markerLayer)
+                .bindPopup(ReactDOMServer.renderToString(<Popup id={index} item={item}/>))
         })
     }
 
