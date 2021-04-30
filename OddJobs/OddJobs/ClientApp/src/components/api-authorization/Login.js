@@ -3,7 +3,12 @@ import { Component } from 'react';
 import authService from './AuthorizeService';
 import { AuthenticationResultStatus } from './AuthorizeService';
 import { LoginActions, QueryParameterNames, ApplicationPaths } from './ApiAuthorizationConstants';
-
+import {Col, Row} from "reactstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faDirections,
+    faCheckSquare
+} from "@fortawesome/free-solid-svg-icons";
 // The main responsibility of this component is to handle the user's login process.
 // This is the starting point for the login process. Any component that needs to authenticate
 // a user can simply perform a redirect to this component with a returnUrl query parameter and
@@ -51,14 +56,49 @@ export class Login extends Component {
         } else {
             switch (action) {
                 case LoginActions.Login:
-                    return (<div>Processing login</div>);
+                    return (<div className="w-100 h-100 d-flex align-items-center">
+                                <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
+                                    <Row>
+                                        <Col sm={2}>
+                                            <FontAwesomeIcon icon={faDirections} size={"5x"} className="mx-auto" color={"#4aba70"}/>
+                                        </Col>
+                                        <Col sm={10}>
+                                        <h4 className="alert-heading text-light">Rozpoczęto logowanie</h4>
+                                        <p className={"text-light"}>Za chwilę zostaniesz przekierowany do strony logowania</p>
+                                        </Col>
+                                    </Row>
+                                </div>
+                            </div>);
                 case LoginActions.LoginCallback:
-                    return (<div>Processing login callback</div>);
+                    return (<div className="w-100 h-100 d-flex align-items-center">
+                        <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
+                            <Row>
+                                <Col sm={2}>
+                                    <FontAwesomeIcon icon={faCheckSquare} size={"5x"} className="mx-auto" color={"#4aba70"}/>
+                                </Col>
+                                <Col sm={10}>
+                                    <h4 className="alert-heading text-light">Zalogowano</h4>
+                                    <p className={"text-light"}>Miło, że do nas wróciłeś ;)</p>
+                                </Col>
+                            </Row>
+                        </div>
+                    </div>);
                 case LoginActions.Profile:
                 case LoginActions.Register:
-                    return (<div></div>);
-                default:
-                    throw new Error(`Invalid action '${action}'`);
+                    return (<div className="w-100 h-100 d-flex align-items-center">
+                        <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
+                            <Row>
+                                <Col sm={2}>
+                                    <FontAwesomeIcon icon={faDirections} size={"5x"} className="mx-auto" color={"#4aba70"}/>
+                                </Col>
+                                <Col sm={10}>
+                                    <h4 className="alert-heading text-light">Rozpoczęto rejestrację</h4>
+                                    <p className={"text-light"}>Za chwilę rozpoczeniesz rejestrację</p>
+                                </Col>
+                            </Row>
+                        </div>
+                    </div>);
+                
             }
         }
     }

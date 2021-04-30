@@ -3,6 +3,9 @@ import { Component } from 'react';
 import authService from './AuthorizeService';
 import { AuthenticationResultStatus } from './AuthorizeService';
 import { QueryParameterNames, LogoutActions, ApplicationPaths } from './ApiAuthorizationConstants';
+import {Col, Row} from "reactstrap";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCheckSquare, faHourglassEnd, faDirections} from "@fortawesome/free-solid-svg-icons";
 
 // The main responsibility of this component is to handle the user's logout process.
 // This is the starting point for the logout process, which is usually initiated when a
@@ -48,16 +51,49 @@ export class Logout extends Component {
             return <div></div>
         }
         if (!!message) {
-            return (<div>{message}</div>);
+            return (<div className="w-100 h-100 d-flex align-items-center">
+                <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
+                    <Row>
+                        <Col sm={2}>
+                            <FontAwesomeIcon icon={faCheckSquare} size={"5x"} className="mx-auto" color={"#4aba70"}/>
+                        </Col>
+                        <Col sm={10}>
+                            <h4 className="alert-heading text-light">Poprawnie wylogowany</h4>
+                            <p className={"text-light"}>Mamy nadzieję, że wrócisz do nas niedługo</p>
+                        </Col>
+                    </Row>
+                </div>
+            </div>);
         } else {
             const action = this.props.action;
             switch (action) {
                 case LogoutActions.Logout:
-                    return (<div>Processing logout</div>);
-                case LogoutActions.LogoutCallback:
-                    return (<div>Processing logout callback</div>);
+                    return (<div className="w-100 h-100 d-flex align-items-center">
+                        <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
+                            <Row>
+                                <Col sm={2}>
+                                    <FontAwesomeIcon icon={faDirections} size={"5x"} className="mx-auto" color={"#4aba70"}/>
+                                </Col>
+                                <Col sm={10}>
+                                    <h4 className="alert-heading text-light mx-auto">Wylogowywanie</h4>
+                                </Col>
+                            </Row>
+                        </div>
+                    </div>);
                 case LogoutActions.LoggedOut:
-                    return (<div>{message}</div>);
+                    return (<div className="w-100 h-100 d-flex align-items-center">
+                        <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
+                            <Row>
+                                <Col sm={2}>
+                                    <FontAwesomeIcon icon={faHourglassEnd} size={"5x"} className="mx-auto" color={"#4aba70"}/>
+                                </Col>
+                                <Col sm={10}>
+                                    <h4 className="alert-heading text-light">Poprawnie wylogowany</h4>
+                                    <p className={"text-light"}>Do zobaczenia niedługo :)</p>
+                                </Col>
+                            </Row>
+                        </div>
+                    </div>);
                 default:
                     throw new Error(`Invalid action '${action}'`);
             }

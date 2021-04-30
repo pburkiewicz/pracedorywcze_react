@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import {Col, Container, Row} from 'reactstrap';
 import SideBar from './SideMenu';
 import NavMenu from "./NavMenu";
-import {Login} from "./api-authorization/Login";
-import {LoginActions} from "./api-authorization/ApiAuthorizationConstants";
 
 export class Layout extends Component {
   static displayName = Layout.name;
@@ -19,7 +17,7 @@ export class Layout extends Component {
                   <Col className={"bg-dark"} style={{maxWidth: "10vh"}}>
                       <SideBar />
                   </Col>
-                  <Col className={"p-0"} >
+                  <Col className={"p-0 h-100"} style={{background: "#313131"}}>
                       {this.props.children}
                   </Col>
               </Row>
