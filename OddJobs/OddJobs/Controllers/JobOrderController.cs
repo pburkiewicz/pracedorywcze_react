@@ -25,7 +25,7 @@ namespace OddJobs.Controllers
         public IEnumerable<JobOrder> FetchData(double left,double right, double up, double down)
         {
             return (from jobOrder in _context.JobOrders
-                where jobOrder.Latitude>down && jobOrder.Latitude<up &&
+                where jobOrder.Active && jobOrder.Latitude>down && jobOrder.Latitude<up &&
                       jobOrder.Longitude>left && jobOrder.Longitude<right 
                         select jobOrder).ToList();
         }

@@ -367,6 +367,9 @@ namespace OddJobs.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("ProposedPayment")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("RegisteredTime")
                         .HasColumnType("timestamp without time zone");
 

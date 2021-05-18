@@ -10,7 +10,10 @@ namespace OddJobs.Models
     {
         [Required]
         public int ID { get; set; }
-        
+
+        [Required]
+        public int ProposedPayment { get; set; }
+
         [Required]
         public DateTime RegisteredTime { get; set;}
 

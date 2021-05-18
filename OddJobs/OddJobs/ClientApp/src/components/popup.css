@@ -1,0 +1,15 @@
+.leaflet-popup-content-wrapper
+  {
+    background-color: rgb(52, 58, 64);
+    opacity: 0.9;
+  }
+
+
+.leaflet-popup-tip{
+  background-color: rgb(52, 58, 64);
+  }
+
+.dark-grey-coll{
+  color: rgb(213, 213, 213);
+  background-color: rgb(52, 58, 64);
+}
