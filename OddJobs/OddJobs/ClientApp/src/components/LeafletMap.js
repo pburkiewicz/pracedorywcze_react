@@ -55,7 +55,7 @@ class Map extends React.Component {
             zoom: zoom,
             position: position
         });
-        console.log(this.state.bigBounds);
+        //console.log(this.state.bigBounds);
         if (this.ControlSetBigBounds(bounds)) return;
         const response = await fetch("jobOrder/fetchData/" +
             this.state.bigBounds[3] +
@@ -64,8 +64,8 @@ class Map extends React.Component {
             "/" + this.state.bigBounds[1]);
         const jobs =await response.json();
         this.markerLayer.clearLayers();
-        console.log("after fetch\n");
-        console.log(jobs);
+        //console.log("after fetch\n");
+        //console.log(jobs);
         this.addIcons(jobs);
     }
     
@@ -101,8 +101,8 @@ class Map extends React.Component {
     SetBigBounds(bounds) {
         const verticalHole = bounds.getNorth() - bounds.getSouth();
         const horizontalHole = bounds.getEast() - bounds.getWest();
-        console.log(bounds)
-        console.log(verticalHole, "\t" ,horizontalHole);
+        //console.log(bounds)
+        //console.log(verticalHole, "\t" ,horizontalHole);
         this.setState({
             bigBounds: [bounds.getNorth()+verticalHole*this.props.resolution,
                 bounds.getSouth()-verticalHole*this.props.resolution,
