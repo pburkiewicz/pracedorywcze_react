@@ -49,7 +49,7 @@ const AddJobForm = () => {
                         </FormGroup>
                         <FormGroup>
                             {/*<Label for="Description">Opis zlecenia</Label>*/}
-                            <Input type="textarea" onChange={(e) => setDescription(e.target.value)} name="Description" id="description" placeholder="Opis Zlecenia" rows={10} />
+                            <Input type="textarea" style={{resize: "none"}} onChange={(e) => setDescription(e.target.value)} name="Description" id="description" placeholder="Opis Zlecenia" rows={10} />
                         </FormGroup>
                         <FormGroup>
                             {/*<Label for="salary">Wynagrodzenia</Label>*/}
