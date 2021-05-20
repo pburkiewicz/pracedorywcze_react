@@ -15,6 +15,9 @@ namespace OddJobs.Models
         public DateTime RegisteredTime { get; set;}
 
         public DateTime ExpirationTime{ get; set;}
+        
+        [Required]
+        public DateTime StartDate { get; set;}
 
         [Required]
         public double Latitude{ get; set;}

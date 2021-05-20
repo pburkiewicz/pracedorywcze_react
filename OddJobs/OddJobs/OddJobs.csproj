@@ -40,6 +40,7 @@
         <Content Include="ClientApp\node_modules\leaflet-control-geocoder\package.json" />
         <Content Include="ClientApp\node_modules\leaflet-control-geocoder\README.md" />
         <Content Include="ClientApp\src\components\AddJob.js" />
+        <Content Include="ClientApp\src\components\css\formStyle.css" />
         <Content Include="ClientApp\src\components\NavMenu.js" />
         <Content Include="ClientApp\src\components\SmallMap.js" />
         <Content Include="ClientApp\src\components\SubMenu.js" />

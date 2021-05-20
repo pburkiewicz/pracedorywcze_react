@@ -12,17 +12,6 @@ using OddJobs.Models;
 
 namespace OddJobs.Controllers
 {
-    public class JobForm
-    {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public double Salary { get; set; }
-        public DateTime Date { get; set; }
-        public double Lat { get; set; }
-        public double Lng { get; set; }
-        public string Address { get; set; }
-        public string User { get; set; }
-    }
     [ApiController]
     [Route("[controller]")]
     public class JobOrderController : ControllerBase
@@ -64,8 +53,9 @@ namespace OddJobs.Controllers
                 Address = jobForm.Address,
                 Active = true,
                 Reported = false,
-                ExpirationTime = jobForm.Date.AddDays(60),
+                ExpirationTime = DateTime.Now.AddDays(60),
                 RegisteredTime = DateTime.Now,
+                StartDate = jobForm.Date,
                 Principal = user,
                 PrincipalId = jobForm.User
             };
@@ -74,5 +64,17 @@ namespace OddJobs.Controllers
 
             return Ok("ok");
         }
+    }
+    
+    public class JobForm
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public double Salary { get; set; }
+        public DateTime Date { get; set; }
+        public double Lat { get; set; }
+        public double Lng { get; set; }
+        public string Address { get; set; }
+        public string User { get; set; }
     }
 }

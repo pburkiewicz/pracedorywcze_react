@@ -3,7 +3,7 @@ import {Col, Form, FormGroup, Input, Label, Row} from "reactstrap";
 import SmallMap from "./SmallMap";
 import {OpenStreetMapProvider} from "leaflet-geosearch";
 import authService from "./api-authorization/AuthorizeService";
-
+import './css/formStyle.css'
 
 const AddJobForm = () => {
     const [title, setTitle] = useState()
@@ -43,40 +43,46 @@ const AddJobForm = () => {
     
     return (
         <Row style={{width: '100%', height: '100%'}} className={"w-100 h-100 d-flex align-items-center"}>
-            <Form style={{width: '80%', height: '100%'}} className={"alert alert-success mx-auto bg-dark"} onSubmit={handleSubmit} >
+            <Form style={{width: '80%'}} className={" mx-auto "} onSubmit={handleSubmit} >
                 <Row>
-                <Col>
-                <FormGroup>
-                    <Label for="Title">Tytuł</Label>
-                    <Input name="Tytuł" onChange={(e) => setTitle(e.target.value)} id="title" placeholder="Tytuł"/>
-                </FormGroup>
-                <FormGroup>
-                    <Label for="Description">Opis zlecenia</Label>
-                    <Input type="textarea" onChange={(e) => setDescription(e.target.value)} name="Description" id="description" placeholder="Opis Zlecenia"/>
-                </FormGroup>
-                <FormGroup>
-                    <Label for="salary">Wynagrodzenia</Label>
-                    <Input type="number" onChange={(e) => setSalary(e.target.value)} name="salary" id="salary" placeholder="Wynagrodzenie" step="0.01"/>
-                </FormGroup>
-                <FormGroup>
-                    <Label for="date">Data</Label>
-                    <Input type="date" onChange={(e) => setDate(e.target.value)} name="date" id="date"/>
-                </FormGroup>
-                <FormGroup>
-                    <Label for="address">Adres</Label>
-                    <Input type="text" value={address} name="address" id="address" placeholder={"Wybierz adres na mapie"} disabled/>
-                </FormGroup>
-                </Col>
-                <Col>
-                <FormGroup style={{height: "400px", width: "600px"}}>
-                    <SmallMap setAddress={setAddress} setCoordinates={setCoordinates}/>
-                </FormGroup>
-                </Col>
+                    <h4  className={" mx-auto text-light pb-4"}> Dodaj zlecenie</h4>
                 </Row>
                 <Row>
+                    <Col>
+                        <FormGroup>
+                            {/*<Label for="Title">Tytuł</Label>*/}
+                            <Input name="Tytuł" onChange={(e) => setTitle(e.target.value)} id="title" placeholder="Tytuł"/>
+                        </FormGroup>
+                        <FormGroup>
+                            {/*<Label for="Description">Opis zlecenia</Label>*/}
+                            <Input type="textarea" onChange={(e) => setDescription(e.target.value)} name="Description" id="description" placeholder="Opis Zlecenia" rows={10} />
+                        </FormGroup>
+                        <FormGroup>
+                            {/*<Label for="salary">Wynagrodzenia</Label>*/}
+                            <Input type="number" onChange={(e) => setSalary(e.target.value)} name="salary" id="salary" placeholder="Wynagrodzenie" step="0.01" min="0"/>
+                        </FormGroup>
+                        <FormGroup>
+                            {/*<Label for="date">Data</Label>*/}
+                            <Input onChange={(e) => setDate(e.target.value)} placeholder="Data rozpoczęcia zlecenia" name="date" id="date" onFocus={(e) => { console.log(e); e.target.type='date'}} onBlur={(e) => { if(!e.target.value) e.target.type='text'}}/>
+                        </FormGroup>
+                       
+                    </Col>
+                <Col>
                     <FormGroup>
-                        <Input type="submit" value="Dodaj"/>
+                        {/*<Label for="address">Adres</Label>*/}
+                        <Input type="text" value={address} className={"disabled"} name="address" id="address" placeholder={"Wybierz adres na mapie"} disabled />
                     </FormGroup>
+                    <div className={"w-100"} style={{height: "84%"}}>
+                        <SmallMap setAddress={setAddress} setCoordinates={setCoordinates}/>
+                    </div>
+                </Col>
+                </Row>
+                <Row mt={3}>
+                    <Col>
+                        <FormGroup className={"w-100 mb-0"} style={{paddingBottom: "0 !important"}}>
+                            <Input type="submit" className={"btn btn-block btn-lg w-100"} value="Dodaj"/>
+                        </FormGroup>
+                    </Col>
                 </Row>
             </Form>
         </Row>

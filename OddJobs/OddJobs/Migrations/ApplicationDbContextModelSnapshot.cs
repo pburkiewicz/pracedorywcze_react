@@ -380,6 +380,9 @@ namespace OddJobs.Migrations
                     b.Property<double>("Salary")
                         .HasColumnType("double precision");
 
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
