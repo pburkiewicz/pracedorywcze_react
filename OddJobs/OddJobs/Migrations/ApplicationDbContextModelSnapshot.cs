@@ -351,6 +351,10 @@ namespace OddJobs.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -375,6 +379,12 @@ namespace OddJobs.Migrations
 
                     b.Property<bool>("Reported")
                         .HasColumnType("boolean");
+
+                    b.Property<double>("Salary")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Title")
                         .IsRequired()

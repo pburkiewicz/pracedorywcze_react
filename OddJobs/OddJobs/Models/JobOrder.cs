@@ -18,6 +18,9 @@ namespace OddJobs.Models
         public DateTime RegisteredTime { get; set;}
 
         public DateTime ExpirationTime{ get; set;}
+        
+        [Required]
+        public DateTime StartDate { get; set;}
 
         [Required]
         public double Latitude{ get; set;}
@@ -30,11 +33,17 @@ namespace OddJobs.Models
 
         [Required]
         public bool Active{ get; set;}
+        
+        [Required]
+        public double Salary{ get; set;}
 
         [Required]
         public string Title{ get; set;}
 
         public string Description{ get; set;}
+        
+        [Required]
+        public string Address { get; set; }
 
         [Required]
         public ApplicationUser Principal{ get; set;}
