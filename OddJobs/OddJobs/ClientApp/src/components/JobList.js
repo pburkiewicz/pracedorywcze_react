@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import DataTable from 'react-data-table-component';
 
 const columns = [
@@ -38,78 +38,63 @@ const columns = [
     }
 ];
 
-class JobList extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            position: [51.981497, 20.143433],
-            jobs: null,
-            loading: true,
-            buff: 20
-        };
-        this.getPosition = this.getPosition.bind(this);        
-    }
-    componentDidMount() {
-        this.localize();
-    }
+function JobList (props) {
 
-    render() {
-        let contents = this.state.loading
-            ? <h2 style={{color: this.props.color}}><em>Proszę czekać, trwa pobieranie dostępnych ofert z serwera...</em></h2>
-            : this.renderJobTable(this.state.jobs);
+    const [position,setPosition] = useState(null);
+    const [jobs,setJobs] = useState(null);
+    const [loading, setLoading] = useState( true);
+    const [buff,setBuff] = useState( 20);
+    const [content,setContent] = useState(null);
+    useEffect(()=>{
+        localize();
+    },[])
+    useEffect(()=>{
+        setLoading(true);
+        fetchData();
+    },[position])
 
-        return (
-            <div>
-                <h1 style={{color: this.props.color}} id="tableLabel" >Dostępne prace</h1>
-                {contents}
-            </div>
-        );
-    }
 
-    renderJobTable(jobs) {
+    const renderJobTable = (jobs) => {
         if (!jobs.length)
         {
-            return <h3 style={{color: this.props.color}}>Niestety w tej okolicy nie ma żadnych dostępnych zleceń...</h3>
+            return <h3 style={{color: props.color}}>Niestety w tej okolicy nie ma żadnych dostępnych zleceń...</h3>
         }
         return <DataTable
+            theme = "dark"
             title="Zlecenia w twojej okolicy"
             columns={columns}
             data={jobs}
         />;
     }
 
-    localize() {
-        navigator.geolocation.getCurrentPosition(this.getPosition);
+    const localize = () => {
+        navigator.geolocation.getCurrentPosition(getPosition);
     }
 
-    getPosition(pos) {
-        this.setState({
-          position: [pos.coords.latitude, pos.coords.longitude]  
-        })
-        this.fetchData();
+    const getPosition =(pos) => {
+        setPosition([pos.coords.latitude, pos.coords.longitude] );
     }
 
-    async fetchData() {
+    const fetchData = async() => {
+        if (position==null) return;
         console.log("start fetch\n");
         console.log("jobOrder/fetchData/" +
-            this.state.position[0] +
-            "/" + this.state.position[1] +
-            "/" + this.state.buff);
+            position[0] +
+            "/" + position[1] +
+            "/" + buff);
         const response = await fetch("jobOrder/fetchData/" +
-            this.state.position[0] +
-            "/" + this.state.position[1] +
-            "/" + this.state.buff);
+            position[0] +
+            "/" + position[1] +
+            "/" + buff);
         const jobs =await response.json();
-        //console.log(jobs);
-        const data = this.connectWithDistance(jobs);
+        console.log(jobs);
+        const data = connectWithDistance(jobs);
         console.log(data);
-         this.setState({
-             jobs: data,
-             loading: false
-         })
+        setJobs( data);
+        setLoading(false);
     }
 
-    connectWithDistance(jobs) {
+    const connectWithDistance = (jobs) => {
         const data = [];
         jobs.map( construct =>
         {
@@ -125,6 +110,24 @@ class JobList extends React.Component {
         })
         return data;
     }
+
+    
+
+    useEffect(() => {
+        setContent( loading
+            ?
+            <h2 style={{color: props.color}}><em>Proszę czekać, trwa pobieranie dostępnych ofert z serwera...</em></h2>
+            : renderJobTable(jobs));
+    },[loading]);
+            
+    console.log(position);        
+    return (
+        <div>
+        <h1 style={{color: props.color}} id="tableLabel" >Dostępne prace</h1>
+        {content}
+        </div>
+    );
+    
 }
 
 JobList.defaultProps = {

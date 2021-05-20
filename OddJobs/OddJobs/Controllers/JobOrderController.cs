@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using OddJobs.Data;
 using OddJobs.Models;
 using System;
+using Microsoft.Extensions.Logging.EventSource;
 
 namespace OddJobs.Controllers
 {
@@ -34,7 +35,8 @@ namespace OddJobs.Controllers
         [HttpGet("fetchdata/{lat}/{lng}/{buff}")]
         public IEnumerable<Tuple<JobOrder, double>> FetchDataBUffer(double lat, double lng, double buff)
         {
-            return _context.JobOrders.Select(jobOrder => new
+            _logger.LogDebug("{Lat}, {Lng}, {Buff}",lat, lng, buff);
+            var x =  _context.JobOrders.Select(jobOrder => new
                 {
                     jobOrder,
                     dist = 6371 * Math.Acos(
@@ -45,6 +47,8 @@ namespace OddJobs.Controllers
                 .Where(@t => @t.jobOrder.Active && @t.dist < buff)
                 .OrderBy(@t => @t.dist).Take(100)
                 .Select(@t =>   new Tuple<JobOrder,double>(@t.jobOrder, @t.dist)).ToList();
+            _logger.LogDebug("{Count}",x.Count);
+            return x;
         }
     
 

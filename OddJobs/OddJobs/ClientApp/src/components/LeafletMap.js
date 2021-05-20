@@ -23,9 +23,14 @@ class Map extends React.Component {
     
     
     componentDidMount() {
+        this.isMountedVal = 1
         this.map();
     }
     
+    componentWillUnmount() {
+        this.isMountedVal = 0
+    }
+
     map() {
         this.mapBox = L.map('map').setView(this.state.position, this.state.zoom);
         this.mapBox.locate({setView : true});
@@ -42,7 +47,7 @@ class Map extends React.Component {
         const bounds = this.mapBox.getBounds();
         const zoom = this.mapBox.getZoom()
         const position = this.mapBox.getCenter();
-        //console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
+        console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
         if (zoom < 11) {
             this.markerLayer.clearLayers();
             this.setState({
@@ -57,6 +62,7 @@ class Map extends React.Component {
         });
         //console.log(this.state.bigBounds);
         if (this.ControlSetBigBounds(bounds)) return;
+        if (this.isMountedVal===0) return;
         const response = await fetch("jobOrder/fetchData/" +
             this.state.bigBounds[3] +
             "/" + this.state.bigBounds[2] +

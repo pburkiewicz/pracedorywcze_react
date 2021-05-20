@@ -3,10 +3,10 @@ import {Col, Container, Row} from 'reactstrap';
 import SideBar from './SideMenu';
 import NavMenu from "./NavMenu";
 
-export class Layout extends Component {
-  static displayName = Layout.name;
+export function Layout (props) {
+ 
 
-  render () {
+
     return (
       <div>
           <Container fluid style={{height: "100vh"}}>
@@ -18,11 +18,11 @@ export class Layout extends Component {
                       <SideBar />
                   </Col>
                   <Col className={"p-0 h-100"} style={{background: "#313131"}}>
-                      {this.props.children}
+                      {props.children}
                   </Col>
               </Row>
           </Container>
       </div>
     );
-  }
+  
 }
