@@ -32,16 +32,21 @@ namespace OddJobs.Controllers
         }
 
         [HttpGet("fetchdata/{lat}/{lng}/{buff}")]
-        public IEnumerable<JobOrder> FetchDataBUffer(double lat, double lng, double buff)
+        public IEnumerable<Tuple<JobOrder, double>> FetchDataBUffer(double lat, double lng, double buff)
         {
-            return (from jobOrder in _context.JobOrders 
-                where jobOrder.Active && 
-                      6371 * Math.Acos( Math.Cos(  Math.PI / 180 *lat ) * Math.Cos(  Math.PI / 180 *jobOrder.Latitude  ) *
-                          Math.Cos(  Math.PI / 180 * jobOrder.Longitude  -  Math.PI / 180 *lng ) + Math.Sin(  Math.PI / 180 *lat ) *
-                          Math.Sin(  Math.PI / 180 * jobOrder.Latitude  ) )  < buff
-                 select  jobOrder).ToList();
+            return _context.JobOrders.Select(jobOrder => new
+                {
+                    jobOrder,
+                    dist = 6371 * Math.Acos(
+                        Math.Cos(Math.PI / 180 * lat) * Math.Cos(Math.PI / 180 * jobOrder.Latitude) *
+                        Math.Cos(Math.PI / 180 * jobOrder.Longitude - Math.PI / 180 * lng) +
+                        Math.Sin(Math.PI / 180 * lat) * Math.Sin(Math.PI / 180 * jobOrder.Latitude))
+                })
+                .Where(@t => @t.jobOrder.Active && @t.dist < buff)
+                .OrderBy(@t => @t.dist).Take(100)
+                .Select(@t =>   new Tuple<JobOrder,double>(@t.jobOrder, @t.dist)).ToList();
         }
-
+    
 
     }
 }

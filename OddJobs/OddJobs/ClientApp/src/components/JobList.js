@@ -1,5 +1,42 @@
 import React from "react";
+import DataTable from 'react-data-table-component';
 
+const columns = [
+    {
+        name: 'Tytuł',
+        selector: 'title',
+        sortable: true,
+        center: true
+    },
+    {
+        name: 'Opis',
+        selector: 'description',
+        center: true
+    },
+    {
+        name: 'Wynagrodzenie',
+        selector: 'payment',
+        sortable: true,
+        center: true
+    },
+    {
+        name: 'Aktywne Do',
+        selector: 'activeData',
+        sortable: true,
+        center: true
+    },
+    {
+        name: 'Odległość',
+        selector: 'distance',
+        sortable: true,
+        center: true
+    },
+    {
+        name: 'Szczegóły',
+        selector: 'link',
+        center: true
+    }
+];
 
 class JobList extends React.Component {
     constructor(props) {
@@ -10,7 +47,6 @@ class JobList extends React.Component {
             loading: true,
             buff: 20
         };
- 
         this.getPosition = this.getPosition.bind(this);        
     }
     componentDidMount() {
@@ -35,7 +71,11 @@ class JobList extends React.Component {
         {
             return <h3 style={{color: this.props.color}}>Niestety w tej okolicy nie ma żadnych dostępnych zleceń...</h3>
         }
-        return <h1 style={{color: this.props.color}}>Succes</h1>;
+        return <DataTable
+            title="Zlecenia w twojej okolicy"
+            columns={columns}
+            data={jobs}
+        />;
     }
 
     localize() {
@@ -60,16 +100,30 @@ class JobList extends React.Component {
             "/" + this.state.position[1] +
             "/" + this.state.buff);
         const jobs =await response.json();
-        console.log(jobs);
-        this.connectWithDistance(jobs);
-        this.setState({
-            jobs: jobs,
-            loading: false
-        })
+        //console.log(jobs);
+        const data = this.connectWithDistance(jobs);
+        console.log(data);
+         this.setState({
+             jobs: data,
+             loading: false
+         })
     }
 
     connectWithDistance(jobs) {
-        
+        const data = [];
+        jobs.map( construct =>
+        {
+            const job = construct['item1'];
+            data.push({
+                title: job['title'] ,
+                description: job['description'],
+                payment: job['proposedPayment'],
+                activeData: job['expirationTime'],
+                distance:construct['item2'],
+                link:'/list/' + job['id'],
+            })
+        })
+        return data;
     }
 }
 
