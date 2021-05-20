@@ -16,7 +16,6 @@ const AddJobForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const user =await authService.getUser();
-        console.log(user);
         let jobOrder = {
                 Title: title,
                 Description: description,
@@ -26,24 +25,19 @@ const AddJobForm = () => {
                 Lng: coordinates.lng,
                 Address: address,
                 User: user.sub
-            
         }
-        
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(jobOrder)
         };
-        console.log("bbbb")
         const response = await fetch('https://localhost:5001/joborder/add', requestOptions);
-        console.log(response)
-        // const data = await response.json();
-
+        console.log(response);
     }
     
     return (
-        <Row style={{width: '100%', height: '100%'}} className={"w-100 h-100 d-flex align-items-center"}>
-            <Form style={{width: '80%'}} className={" mx-auto "} onSubmit={handleSubmit} >
+        <Row style={{marginLeft: "0px"}} className={"w-100 h-100  d-flex align-items-center"}>
+            <Form style={{width: '80%'}} className={"mx-auto "} onSubmit={handleSubmit} >
                 <Row>
                     <h4  className={" mx-auto text-light pb-4"}> Dodaj zlecenie</h4>
                 </Row>
@@ -65,7 +59,6 @@ const AddJobForm = () => {
                             {/*<Label for="date">Data</Label>*/}
                             <Input onChange={(e) => setDate(e.target.value)} placeholder="Data rozpoczęcia zlecenia" name="date" id="date" onFocus={(e) => { console.log(e); e.target.type='date'}} onBlur={(e) => { if(!e.target.value) e.target.type='text'}}/>
                         </FormGroup>
-                       
                     </Col>
                 <Col>
                     <FormGroup>

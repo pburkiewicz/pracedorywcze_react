@@ -6,19 +6,15 @@ import {
   faMapMarkedAlt,
   faEnvelope,
   faPlus,
-  faImage,
-  faCopy,
 } from "@fortawesome/free-solid-svg-icons";
 import {NavItem, NavLink, Nav, Row, Col, Container, Navbar} from "reactstrap";
 import { Link } from "react-router-dom";
-import classNames from "classnames";
-import SubMenu from "./SubMenu";
 
 
 const SideBar = ({ isOpen, toggle }) => (
     <div >
       <div className="side-menu">
-        <Nav color="dark" vertical className="">
+        <Nav color="dark" vertical className="" >
           <NavItem className={"w-100"} color="dark" dark>
             <NavLink tag={Link} to={"/add"} className={"p-0 pt-2"} style={{color: '#d5d5d5', textDecoration: 'none'}} >
               <Row>
