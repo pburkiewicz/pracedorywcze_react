@@ -27,11 +27,17 @@ namespace OddJobs.Models
 
         [Required]
         public bool Active{ get; set;}
+        
+        [Required]
+        public double Salary{ get; set;}
 
         [Required]
         public string Title{ get; set;}
 
         public string Description{ get; set;}
+        
+        [Required]
+        public string Address { get; set; }
 
         [Required]
         public ApplicationUser Principal{ get; set;}
