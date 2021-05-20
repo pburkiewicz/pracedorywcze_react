@@ -49,7 +49,7 @@ namespace OddJobs.Controllers
                 Description = jobForm.Description,
                 Latitude = jobForm.Lat,
                 Longitude = jobForm.Lng,
-                Salary = jobForm.Salary,
+                ProposedPayment = jobForm.ProposedPayment,
                 Address = jobForm.Address,
                 Active = true,
                 Reported = false,
@@ -70,7 +70,7 @@ namespace OddJobs.Controllers
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public double Salary { get; set; }
+        public double ProposedPayment { get; set; }
         public DateTime Date { get; set; }
         public double Lat { get; set; }
         public double Lng { get; set; }

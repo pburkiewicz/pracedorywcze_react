@@ -371,17 +371,14 @@ namespace OddJobs.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("ProposedPayment")
-                        .HasColumnType("integer");
+                    b.Property<double>("ProposedPayment")
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime>("RegisteredTime")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("Reported")
                         .HasColumnType("boolean");
-
-                    b.Property<double>("Salary")
-                        .HasColumnType("double precision");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp without time zone");

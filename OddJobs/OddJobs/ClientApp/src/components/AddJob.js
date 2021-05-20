@@ -8,7 +8,7 @@ import './css/formStyle.css'
 const AddJobForm = () => {
     const [title, setTitle] = useState()
     const [description, setDescription] = useState()
-    const [salary, setSalary] = useState()
+    const [proposedPayment, setProposedPayment] = useState()
     const [date, setDate] = useState()
     const [address, setAddress] = useState();
     const [coordinates, setCoordinates] = useState({lat: null, lng: null});
@@ -20,7 +20,7 @@ const AddJobForm = () => {
                 Title: title,
                 Description: description,
                 Date: date,
-                Salary: salary,
+                ProposedPayment: proposedPayment,
                 Lat: coordinates.lat,
                 Lng: coordinates.lng,
                 Address: address,
@@ -53,7 +53,7 @@ const AddJobForm = () => {
                         </FormGroup>
                         <FormGroup>
                             {/*<Label for="salary">Wynagrodzenia</Label>*/}
-                            <Input type="number" onChange={(e) => setSalary(e.target.value)} name="salary" id="salary" placeholder="Wynagrodzenie" step="0.01" min="0"/>
+                            <Input type="number" onChange={(e) => setProposedPayment(e.target.value)} name="salary" id="salary" placeholder="Wynagrodzenie" step="0.01" min="0"/>
                         </FormGroup>
                         <FormGroup>
                             {/*<Label for="date">Data</Label>*/}

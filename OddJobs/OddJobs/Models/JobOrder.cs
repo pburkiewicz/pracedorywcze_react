@@ -12,7 +12,7 @@ namespace OddJobs.Models
         public int ID { get; set; }
 
         [Required]
-        public int ProposedPayment { get; set; }
+        public double ProposedPayment { get; set; }
 
         [Required]
         public DateTime RegisteredTime { get; set;}
@@ -34,9 +34,6 @@ namespace OddJobs.Models
         [Required]
         public bool Active{ get; set;}
         
-        [Required]
-        public double Salary{ get; set;}
-
         [Required]
         public string Title{ get; set;}
 
