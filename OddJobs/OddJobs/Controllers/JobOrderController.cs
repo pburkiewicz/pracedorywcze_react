@@ -69,8 +69,8 @@ namespace OddJobs.Controllers
             };
             _context.JobOrders.Add(jobOrder);
             await _context.SaveChangesAsync();
-
-            return Ok("ok");
+            
+            return Ok(jobOrder);
         }
     }
     

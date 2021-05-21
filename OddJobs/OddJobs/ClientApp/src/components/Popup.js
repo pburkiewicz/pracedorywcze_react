@@ -7,6 +7,7 @@ import {
     faInfoCircle,
     faPhone
 } from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
 
 class Popup extends React.Component {
     constructor(props) {
@@ -42,8 +43,8 @@ class Popup extends React.Component {
                                 <p style={{fontSize: "16px"}}>{this.pad(date.getHours(),2)} : {this.pad(date.getMinutes(),2)}</p>
                             </li>
                             <li className="dark-grey-coll list-group-item d-flex justify-content-between align-items-center border-0">
-                                <a href="#"> <button type="button" className="btn btn-success" style={{color: 'rgb(213,213,213)' }}><FontAwesomeIcon icon={faPhone}  size="3x"/></button></a>
-                                <a href="#"><button type="button" className="btn btn-primary" style={{color: 'rgb(213,213,213)'}}><FontAwesomeIcon icon={faInfoCircle}  size="3x"/></button></a>
+                                <Link to={`/jobOrder/${this.props.id}`} style={{color: "rgb(213,213,213); !important"}} className={"btn btn-success"}><FontAwesomeIcon icon={faInfoCircle}  size="3x"/></Link>
+                                <Link to={"#"} className={"btn btn-primary"}  style={{color: "rgb(213,213,213); !important"}}><FontAwesomeIcon icon={faPhone}  size="3x"/></Link>
                             </li>
                         </ul>
                 </div>

@@ -1,13 +1,11 @@
 ﻿import React, {useState, useEffect} from 'react'
+import {Link, useHistory} from "react-router-dom";
 import {Button, Col, Row} from "reactstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faSpinner,
-    faMoneyBill,
     faHandHoldingUsd,
-    faDollarSign,
     faClock,
-    faCalendarDay,
     faExclamationTriangle,
     faMapMarkerAlt
 } from "@fortawesome/free-solid-svg-icons";
@@ -17,11 +15,16 @@ import authService from "./api-authorization/AuthorizeService";
 import './css/detailsStyle.css'
 
 const JobDetails = (props) => {
+    const history = useHistory();
     const [job, setJob] = useState({});
     const [user, setUser] = useState(null)
     const [error, setError] = useState(null);
-    useEffect(async () => {
-        setUser(await authService.getUser());
+    
+    useEffect( () => {
+        (async () => {
+            setUser(await authService.getUser());
+        })();
+        setUser( authService.getUser());
         fetch(`/joborder/get/${props.match.params.id}`)
             .then(async response => {
                 if (!response.ok) {
@@ -34,19 +37,20 @@ const JobDetails = (props) => {
                 }
             });
     }, [])
+    
 
-    let status = <Button type={"link"} className={"w-100"}>Skontaktuj się ze zleceniodawcą</Button>;
+    let status = <Button type={"link"} size="lg" block>Skontaktuj się ze zleceniodawcą</Button>;
     if (Object.keys(job).length !== 0) {
         if (!job.active) {
-            status = <Button active={false} className={"w-100"} style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
+            status = <Button active={false} size="lg" block style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
                 nieaktualne</Button>
         }
         if (user !== null && user.sub === job.principalId) {
             if (job.active) {
-                status = <Button className={"w-100"}>Aktualne zlecenie - zmień</Button>
+                status = <Link to={"#"} className={"w-100 btn btn-success"}>Zlecenie aktywne - zmień status</Link>
             } else {
-                status = <Button className={"w-100"} style={{backgroundColor: "#d9534f"}}>Nieaktualne zlecenie -
-                    zmień</Button>
+                status = <Link to={"#"} className={"w-100 btn btn-success"}>Zlecenie nieaktywne - zmień status -
+                    zmień</Link>
             }
         }
     }
@@ -124,7 +128,7 @@ const JobDetails = (props) => {
                 </Row>
                 <hr className={"bg-secondary mb-1 mt-1"}/>
                 <h6 className={"mt-2 mb-1"}><b>Opis: </b></h6>
-                <p>{job.description}</p>
+                <p style={{whiteSpace: "pre-line"}}>{job.description}</p>
             </Col>
             <Col md={4} className={"ml-3"}>
                 <Row className={"bg-dark mb-3"}>

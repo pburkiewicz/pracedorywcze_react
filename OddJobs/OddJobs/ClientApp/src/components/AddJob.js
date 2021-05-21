@@ -3,8 +3,10 @@ import {Col, Form, FormGroup, Input, Label, Row} from "reactstrap";
 import FormMap from "./FormMap";
 import authService from "./api-authorization/AuthorizeService";
 import './css/formStyle.css'
+import {useHistory} from "react-router-dom";
 
 const AddJobForm = () => {
+    const history = useHistory();
     const [title, setTitle] = useState()
     const [description, setDescription] = useState()
     const [proposedPayment, setProposedPayment] = useState()
@@ -30,7 +32,15 @@ const AddJobForm = () => {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(jobOrder)
         };
-        const response = await fetch('/joborder/add', requestOptions);
+        fetch('/joborder/add', requestOptions).then(async (response)=>{
+            if(response.ok){
+                
+                let job = await response.json();
+                console.log(job);
+                history.push( `/jobOrder/${job.id}`);
+            }
+        });
+        
     }
     
     return (

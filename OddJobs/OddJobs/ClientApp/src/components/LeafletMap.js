@@ -6,6 +6,7 @@ import 'leaflet.locatecontrol';
 import Popup from "./Popup"
 import './css/popup.css';
 import ReactDOMServer from 'react-dom/server';
+import {BrowserRouter} from "react-router-dom";
 
 
 
@@ -74,7 +75,7 @@ class Map extends React.Component {
         icons.forEach((item, index) =>
         {
             const marker = L.marker([item['latitude'], item['longitude']], {icon: greenIcon}).addTo(this.markerLayer)
-                .bindPopup(ReactDOMServer.renderToString(<Popup id={index} item={item} style={{background: 'gray', backgroundColor: 'gray'}}/>))
+                .bindPopup(ReactDOMServer.renderToString(<BrowserRouter><Popup id={index} item={item} style={{background: 'gray', backgroundColor: 'gray'}}/></BrowserRouter>))
         })
     }
 
