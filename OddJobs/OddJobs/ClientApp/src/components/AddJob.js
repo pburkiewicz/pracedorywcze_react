@@ -1,7 +1,6 @@
 ﻿import React, {useState} from 'react'
 import {Col, Form, FormGroup, Input, Label, Row} from "reactstrap";
 import FormMap from "./FormMap";
-import {OpenStreetMapProvider} from "leaflet-geosearch";
 import authService from "./api-authorization/AuthorizeService";
 import './css/formStyle.css'
 
@@ -35,7 +34,7 @@ const AddJobForm = () => {
     }
     
     return (
-        <Row style={{marginLeft: "0px"}} className={"w-100 h-100  d-flex align-items-center"}>
+        <Row style={{marginLeft: "0px"}} className={"w-100 mt-3  d-flex align-items-center"}>
             <Form style={{width: '80%'}} className={"mx-auto "} onSubmit={handleSubmit} >
                 <Row>
                     <h4  className={" mx-auto text-light pb-4"}> Dodaj zlecenie</h4>

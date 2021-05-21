@@ -56,7 +56,7 @@ class FormMap extends React.Component {
         this.mapBox.on('click', function(e){
             if (this.Marker !== undefined) {
                 this.removeLayer(this.Marker);
-            };
+            }
             this.Marker = new L.marker(e.latlng, {icon: greenIcon});
             this.addLayer(this.Marker);
             geocoder.reverse(L.latLng(e.latlng), this.options.crs.scale(this.getZoom()), async result=>{

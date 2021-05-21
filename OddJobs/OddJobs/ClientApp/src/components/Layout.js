@@ -9,13 +9,11 @@ export class Layout extends Component {
 
   render () {
     return (
-      <div>
-          
-          <Container fluid style={{height: "92vh"}}>
+          <Container fluid style={{height: "100%"}}>
               <Row style={{height: "75px;", zIndex:"2"}} >
                   <NavMenu />
               </Row>
-              <Row style={{height: "100%"}}>
+              <Row style={{height: "calc(100vh - 75px)"}}>
                   <Col className={"bg-dark fixed-top h-100"} style={{top: "75px", width: "75px", zIndex:"1"}}  >
                       <SideBar className={"fixed-top"}/>
                   </Col>
@@ -25,7 +23,6 @@ export class Layout extends Component {
                   
               </Row>
           </Container>
-      </div>
     );
   }
 }

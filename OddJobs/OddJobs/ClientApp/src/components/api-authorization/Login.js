@@ -56,7 +56,7 @@ export class Login extends Component {
         } else {
             switch (action) {
                 case LoginActions.Login:
-                    return (<div className="w-100 h-100 d-flex align-items-center">
+                    return (<div className="w-100 mt-3 d-flex align-items-center">
                                 <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
                                     <Row>
                                         <Col sm={2}>
@@ -70,7 +70,7 @@ export class Login extends Component {
                                 </div>
                             </div>);
                 case LoginActions.LoginCallback:
-                    return (<div className="w-100 h-100 d-flex align-items-center">
+                    return (<div className="w-100 mt-3 d-flex align-items-center">
                         <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
                             <Row>
                                 <Col sm={2}>
@@ -85,7 +85,7 @@ export class Login extends Component {
                     </div>);
                 case LoginActions.Profile:
                 case LoginActions.Register:
-                    return (<div className="w-100 h-100 d-flex align-items-center">
+                    return (<div className="w-100 mt-3 d-flex align-items-center">
                         <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
                             <Row>
                                 <Col sm={2}>
