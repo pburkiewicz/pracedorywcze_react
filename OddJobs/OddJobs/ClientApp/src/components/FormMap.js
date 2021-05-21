@@ -7,7 +7,7 @@ import 'leaflet-geosearch/dist/geosearch.css';
 import * as GeoSearch from "leaflet-geosearch";
 import GeocoderControl from "leaflet-control-geocoder";
 
-class SmallMap extends React.Component {
+class FormMap extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -89,4 +89,4 @@ class SmallMap extends React.Component {
         return <div id="map" style={{width:'100%', height: '100%'}}>Generowanie mapy</div>
     }
 }
-export default SmallMap;
+export default FormMap;

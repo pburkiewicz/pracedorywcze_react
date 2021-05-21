@@ -1,6 +1,6 @@
 ﻿import React, {useState} from 'react'
 import {Col, Form, FormGroup, Input, Label, Row} from "reactstrap";
-import SmallMap from "./SmallMap";
+import FormMap from "./FormMap";
 import {OpenStreetMapProvider} from "leaflet-geosearch";
 import authService from "./api-authorization/AuthorizeService";
 import './css/formStyle.css'
@@ -31,8 +31,7 @@ const AddJobForm = () => {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(jobOrder)
         };
-        const response = await fetch('https://localhost:5001/joborder/add', requestOptions);
-        console.log(response);
+        const response = await fetch('/joborder/add', requestOptions);
     }
     
     return (
@@ -66,7 +65,7 @@ const AddJobForm = () => {
                         <Input type="text" value={address} className={"disabled"} name="address" id="address" placeholder={"Wybierz adres na mapie"} disabled />
                     </FormGroup>
                     <div className={"w-100"} style={{height: "84%"}}>
-                        <SmallMap setAddress={setAddress} setCoordinates={setCoordinates}/>
+                        <FormMap setAddress={setAddress} setCoordinates={setCoordinates}/>
                     </div>
                 </Col>
                 </Row>

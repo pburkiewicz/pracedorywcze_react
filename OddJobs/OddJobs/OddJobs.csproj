@@ -40,14 +40,17 @@
         <Content Include="ClientApp\node_modules\leaflet-control-geocoder\package.json" />
         <Content Include="ClientApp\node_modules\leaflet-control-geocoder\README.md" />
         <Content Include="ClientApp\src\components\AddJob.js" />
+        <Content Include="ClientApp\src\components\css\detailsStyle.css" />
         <Content Include="ClientApp\src\components\css\formStyle.css" />
+        <Content Include="ClientApp\src\components\jobDetails.js" />
         <Content Include="ClientApp\src\components\NavMenu.js" />
-        <Content Include="ClientApp\src\components\SmallMap.js" />
+        <Content Include="ClientApp\src\components\FormMap.js" />
         <Content Include="ClientApp\src\components\SubMenu.js" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
         <None Remove="ClientApp\node_modules\leaflet-control-geocoder\**" />
         <Content Remove="ClientApp\node_modules\leaflet-control-geocoder\**" />
+        <None Include="ClientApp\src\components\css\popup.css" />
     </ItemGroup>
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Templates\ControllerGenerator\ApiControllerWithActions.cshtml" />

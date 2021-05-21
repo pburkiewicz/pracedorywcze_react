@@ -37,6 +37,14 @@ namespace OddJobs.Controllers
                         select jobOrder).ToList();
         }
 
+        [HttpGet("get/{id}")]
+        public async Task<IActionResult> GetJob(int id)
+        {
+            var job = await _context.JobOrders.FindAsync(id);
+            if (job != null) return Ok(job);
+            return NotFound();
+        }
+        
         [HttpPost("add")]
         public async Task<IActionResult> AddJob([FromBody] JobForm jobForm)
         {

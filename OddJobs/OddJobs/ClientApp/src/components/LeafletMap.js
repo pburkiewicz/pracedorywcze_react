@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import {greenIcon} from "./Icons"
 import 'leaflet.locatecontrol';
 import Popup from "./Popup"
-import './popup.css';
+import './css/popup.css';
 import ReactDOMServer from 'react-dom/server';
 
 
