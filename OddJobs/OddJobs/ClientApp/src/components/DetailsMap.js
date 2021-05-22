@@ -21,30 +21,18 @@ class DetailsMap extends React.Component {
     componentDidMount() {
             this.map();
     }
-    
-    componentDidUpdate(prevProps, prevState, snapshot){
-        console.log(prevProps)
-        console.log(this.props)
-        if(prevProps.latitude !== this.props.latitude) {
-            if (this.props.latitude && this.props.longitude) {
-                // this.Marker = new L.marker([this.props.latitude, this.props.longitude], {icon: greenIcon});
-                this.mapBox.addLayer(L.marker([this.props.latitude, this.props.longitude], {icon: greenIcon}));
-                this.mapBox.setView([this.props.latitude, this.props.longitude], 13);
-            }
-        }
-    }
-    
+
     map() {
-        this.mapBox = L.map('map').setView(this.state.position, this.state.zoom);
-        this.mapBox.locate({setView : true});
+        this.mapBox = L.map('map').setView([this.props.latitude, this.props.longitude], 13);
+        this.mapBox.addLayer(L.marker([this.props.latitude, this.props.longitude], {icon: greenIcon}));
+        // this.mapBox.locate({setView : true});
         L.control.locate().addTo(this.mapBox);
-        this.mapBox.setView(this.state.position, this.state.zoom);
+        this.mapBox.setView([this.props.latitude, this.props.longitude], 13);
         this.markerLayer = L.layerGroup().addTo(this.mapBox);
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.mapBox);
         this.mapBox.on('moveend',this.OnUpdateMarkers);
-        
     }
 
     async OnUpdateMarkers() {
