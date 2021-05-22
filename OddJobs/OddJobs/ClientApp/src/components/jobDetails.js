@@ -7,7 +7,8 @@ import {
     faHandHoldingUsd,
     faClock,
     faExclamationTriangle,
-    faMapMarkerAlt
+    faMapMarkerAlt,
+    faTrash
 } from "@fortawesome/free-solid-svg-icons";
 import DetailsMap from "./DetailsMap";
 import authService from "./api-authorization/AuthorizeService";
@@ -25,7 +26,7 @@ const JobDetails = (props) => {
             setUser(await authService.getUser());
         })();
         setUser( authService.getUser());
-        fetch(`/joborder/get/${props.match.params.id}`)
+        fetch(`/joborder/api/${props.match.params.id}`)
             .then(async response => {
                 if (!response.ok) {
                    setError(response.status);
@@ -38,7 +39,17 @@ const JobDetails = (props) => {
             });
     }, [])
     
-
+    const deleteJob = () =>{
+        fetch(`/joborder/api/${props.match.params.id}`,{method: "DELETE"})
+            .then(async response => {
+                if (!response.ok) {
+                    setError(response.status);
+                } else {
+                    history.push("/map")
+                }
+            });
+    }
+    
     let status = <Button type={"link"} size="lg" block>Skontaktuj się ze zleceniodawcą</Button>;
     if (Object.keys(job).length !== 0) {
         if (!job.active) {
@@ -47,14 +58,15 @@ const JobDetails = (props) => {
         }
         if (user !== null && user.sub === job.principalId) {
             if (job.active) {
-                status = <Link to={"#"} className={"w-100 btn btn-success"}>Zlecenie aktywne - zmień status</Link>
+                status = [<Link to={"#"} className={"w-100 btn custom-button-green text-light"}>Zlecenie aktywne - zmień status</Link>]
             } else {
-                status = <Link to={"#"} className={"w-100 btn btn-success"}>Zlecenie nieaktywne - zmień status -
-                    zmień</Link>
+                status = [<Link to={"#"} className={"w-100 btn custom-button-red "}>Zlecenie nieaktywne - zmień status -
+                    zmień</Link>]
             }
+            status[1]= <Link className={"w-100 btn custom-button-red text-light"}  onClick={deleteJob}><FontAwesomeIcon icon={faTrash}/>Usuń zlecenie</Link>
         }
     }
-    console.log(error)
+
     if(error == null) {
         if (Object.keys(job).length === 0) {
             return (<div className="w-100 mt-3 d-flex align-items-center">

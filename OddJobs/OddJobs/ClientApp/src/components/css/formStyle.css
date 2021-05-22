@@ -60,16 +60,17 @@
 /*    background: #313131*/
 /*}*/
 
- .btn {
-    background: #4aba70;
+.custom-button-green {
+    background: #4aba70 !important;
     border: none;
     line-height: normal;
 }
 
-.btn:hover, .btn:focus {
+.btn:hover .custom-button-green, .btn:focus .custom-button-green {
     background: #42ae68;
     color: #f8f9fa;
 }
+
 
 /*.login-register-form .checkbox-inline {*/
 /*    float: left;*/
@@ -84,7 +85,7 @@
 /*.login-register-form .small {*/
 /*    font-size: 13px;*/
 /*}*/
- a {
+ a .custom-link{
     color: #4aba70;
 }
 

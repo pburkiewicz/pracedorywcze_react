@@ -81,7 +81,7 @@ const AddJobForm = () => {
                 <Row mt={3}>
                     <Col>
                         <FormGroup className={"w-100 mb-0"} style={{paddingBottom: "0 !important"}}>
-                            <Input type="submit" className={"btn btn-block btn-lg w-100"} value="Dodaj"/>
+                            <Input type="submit" className={"btn btn-block custom-button-green btn-lg w-100"} value="Dodaj"/>
                         </FormGroup>
                     </Col>
                 </Row>

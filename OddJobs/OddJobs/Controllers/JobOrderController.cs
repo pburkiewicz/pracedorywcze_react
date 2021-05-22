@@ -6,6 +6,7 @@ using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OddJobs.Data;
 using OddJobs.Models;
@@ -37,12 +38,22 @@ namespace OddJobs.Controllers
                         select jobOrder).ToList();
         }
 
-        [HttpGet("get/{id}")]
+        [HttpGet("api/{id}")]
         public async Task<IActionResult> GetJob(int id)
         {
             var job = await _context.JobOrders.FindAsync(id);
             if (job != null) return Ok(job);
             return NotFound();
+        }
+        
+        [HttpDelete("api/{id}")]
+        public async Task<IActionResult> DeleteJob(int id)
+        {
+            var job = new JobOrder() { ID = id };
+            _context.Entry(job).State = EntityState.Deleted;
+            await _context.SaveChangesAsync();
+            return Ok();
+            // return NotFound();
         }
         
         [HttpPost("add")]
@@ -72,6 +83,7 @@ namespace OddJobs.Controllers
             
             return Ok(jobOrder);
         }
+
     }
     
     public class JobForm
