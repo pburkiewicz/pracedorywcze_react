@@ -43,7 +43,7 @@ class Popup extends React.Component {
                                 <p style={{fontSize: "16px"}}>{this.pad(date.getHours(),2)} : {this.pad(date.getMinutes(),2)}</p>
                             </li>
                             <li className="dark-grey-coll list-group-item d-flex justify-content-between align-items-center border-0">
-                                <Link to={`/jobOrder/${this.props.id}`} style={{color: "rgb(213,213,213); !important"}} className={"btn btn-success"}><FontAwesomeIcon icon={faInfoCircle}  size="3x"/></Link>
+                                <Link to={`/jobOrder/${this.props.item.id}`} style={{color: "rgb(213,213,213); !important"}} className={"btn btn-success"}><FontAwesomeIcon icon={faInfoCircle}  size="3x"/></Link>
                                 <Link to={"#"} className={"btn btn-primary"}  style={{color: "rgb(213,213,213); !important"}}><FontAwesomeIcon icon={faPhone}  size="3x"/></Link>
                             </li>
                         </ul>

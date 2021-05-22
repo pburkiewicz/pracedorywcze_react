@@ -29,7 +29,7 @@ class Map extends React.Component {
     
     map() {
         this.mapBox = L.map('map').setView(this.state.position, this.state.zoom);
-        this.mapBox.locate({setView : true});
+        this.mapBox.locate({setView : true, maxZoom: 13});
         L.control.locate().addTo(this.mapBox);
         this.mapBox.on('moveend',this.OnUpdateMarkers);
         this.markerLayer = L.layerGroup().addTo(this.mapBox);
