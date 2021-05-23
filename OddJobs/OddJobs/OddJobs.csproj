@@ -48,6 +48,7 @@
         <Content Include="ClientApp\src\components\Loading.js" />
         <Content Include="ClientApp\src\components\NavMenu.js" />
         <Content Include="ClientApp\src\components\FormMap.js" />
+        <Content Include="ClientApp\src\components\reportJobPopup.js" />
         <Content Include="ClientApp\src\components\SubMenu.js" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />

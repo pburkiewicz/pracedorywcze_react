@@ -9,19 +9,23 @@ import {
     faMapMarkerAlt,
     faTrash,
     faEdit,
-    faStarHalfAlt
+    faStarHalfAlt,
+    faEnvelope,
+    faBan
 } from "@fortawesome/free-solid-svg-icons";
 import DetailsMap from "./DetailsMap";
 import authService from "./api-authorization/AuthorizeService";
 
 import './css/detailsStyle.css'
 import LoadingCard from "./Loading";
+import ReportJobPopup from "./reportJobPopup";
 
 const JobDetails = (props) => {
     const history = useHistory();
     const [job, setJob] = useState({});
     const [user, setUser] = useState(null)
     const [error, setError] = useState(null);
+    const [modal, setModal] = useState(false);
     
     useEffect( () => {
         (async () => {
@@ -52,12 +56,11 @@ const JobDetails = (props) => {
             });
     }
     
-    let status = <p className={"w-100 p-2 mb-0 text-center custom-button-green text-light "}>Zlecenie aktualne</p>;
+    const openModal = () => setModal(!modal);
+    
+    let status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light "}>Zlecenie aktualne</p>];
     if (Object.keys(job).length !== 0) {
-        if (!job.active) {
-            status = <Button active={false} size="lg" block style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
-                nieaktualne</Button>
-        }
+       
         if (user !== null && user.sub === job.principalId) {
             if (job.active) {
                 status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light"}>Zlecenie aktualne</p>]
@@ -65,9 +68,28 @@ const JobDetails = (props) => {
                 status = [<p className={"w-100 p-2 mb-0 text-center  custom-button-red text-light"}>Zlecenie nieaktywne - zmień status -
                     zmień</p>]
             }
-            status[1]= <Link to={`./${job.id}/edit`} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}><FontAwesomeIcon className={"mr-1"} icon={faEdit}/>Edytuj zlecenie</Link>
-            status[2]=<Link to={"#"} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}><FontAwesomeIcon className={"mr-1"} icon={faStarHalfAlt}/>Zmień status</Link>
-            status[3]= <Link className={"w-100 btn text-light"}  onClick={deleteJob}><FontAwesomeIcon className={"mr-1"} icon={faTrash}/>Usuń zlecenie</Link>
+            status[1]= <Link to={`./${job.id}/edit`} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}>
+                        <FontAwesomeIcon className={"mr-1"} icon={faEdit}/>Edytuj zlecenie
+                       </Link>
+            status[2]= <Link to={"#"} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
+                        <FontAwesomeIcon className={"mr-1"} icon={faStarHalfAlt}/>Zmień status
+                       </Link>
+            status[3]= <Link className={"w-100 btn text-light"}  onClick={deleteJob}>
+                        <FontAwesomeIcon className={"mr-1"} icon={faTrash}/>Usuń zlecenie
+                       </Link>
+        }else{
+            if (!job.active) {
+                status = <Button active={false} size="lg" block style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
+                    nieaktualne</Button>
+            }
+            if(user !== null){
+                status[1] = <Link to={"#"} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
+                            <FontAwesomeIcon className={"mr-1"} icon={faEnvelope}/>Skontaktuj się ze zleceniodawcą
+                            </Link>
+                status[2] = <Link className={"w-100 btn text-light"}  onClick={openModal}>
+                            <FontAwesomeIcon className={"mr-1"} icon={faBan}/>Zgłoś</Link>
+                status[3] = <ReportJobPopup modal={modal} setModal={setModal} id={job.id} user={user}/>
+            }
         }
     }
 
