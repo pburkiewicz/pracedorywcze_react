@@ -26,7 +26,9 @@ class FormMap extends React.Component {
 
     async map() {
         this.mapBox = L.map('map').setView(this.state.position, this.state.zoom);
-        this.mapBox.locate({setView : true});
+        
+        // this.mapBox.locate({setView : true});
+        
         const geocoder = GeocoderControl.nominatim();
         
         L.control.locate().addTo(this.mapBox);
@@ -38,14 +40,22 @@ class FormMap extends React.Component {
             showPopup: false,
             showMarker: false
         });
-      
+        
         this.mapBox.addControl(search);
+        let marker = undefined;
+        if(this.props.address){
+            this.mapBox.setView(this.props.coordinates, 13);
+            marker = new L.marker(this.props.coordinates, {icon: greenIcon});
+            this.mapBox.addLayer(marker);
+            search.container.firstChild[0].value = this.props.address;
+        }
+        
         this.mapBox.on('geosearch/showlocation', function(e){
-            if (this.Marker !== undefined) {
-                this.removeLayer(this.Marker);
+            if (marker !== undefined) {
+                this.removeLayer(marker);
             };
-            this.Marker = new L.marker(L.latLng(e.location.y, e.location.x), {icon: greenIcon});
-            this.addLayer(this.Marker);
+            marker = new L.marker(L.latLng(e.location.y, e.location.x), {icon: greenIcon});
+            this.addLayer(marker);
         });
         this.markerLayer = L.layerGroup().addTo(this.mapBox);
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -54,11 +64,11 @@ class FormMap extends React.Component {
         this.mapBox.on('moveend',this.OnUpdateMarkers);
         let main = this;
         this.mapBox.on('click', function(e){
-            if (this.Marker !== undefined) {
-                this.removeLayer(this.Marker);
+            if (marker !== undefined) {
+                this.removeLayer(marker);
             }
-            this.Marker = new L.marker(e.latlng, {icon: greenIcon});
-            this.addLayer(this.Marker);
+            marker = new L.marker(e.latlng, {icon: greenIcon});
+            this.addLayer(marker);
             geocoder.reverse(L.latLng(e.latlng), this.options.crs.scale(this.getZoom()), async result=>{
                 if( result.length !== 0 ) {
                     console.log(main.props);

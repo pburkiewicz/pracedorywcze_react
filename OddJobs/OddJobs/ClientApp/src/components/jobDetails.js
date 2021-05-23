@@ -3,17 +3,19 @@ import {Link, useHistory} from "react-router-dom";
 import {Button, Col, Row} from "reactstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-    faSpinner,
     faHandHoldingUsd,
     faClock,
     faExclamationTriangle,
     faMapMarkerAlt,
-    faTrash
+    faTrash,
+    faEdit,
+    faStarHalfAlt
 } from "@fortawesome/free-solid-svg-icons";
 import DetailsMap from "./DetailsMap";
 import authService from "./api-authorization/AuthorizeService";
 
 import './css/detailsStyle.css'
+import LoadingCard from "./Loading";
 
 const JobDetails = (props) => {
     const history = useHistory();
@@ -50,7 +52,7 @@ const JobDetails = (props) => {
             });
     }
     
-    let status = <Button type={"link"} size="lg" block>Skontaktuj się ze zleceniodawcą</Button>;
+    let status = <p className={"w-100 p-2 mb-0 text-center custom-button-green text-light "}>Zlecenie aktualne</p>;
     if (Object.keys(job).length !== 0) {
         if (!job.active) {
             status = <Button active={false} size="lg" block style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
@@ -58,30 +60,20 @@ const JobDetails = (props) => {
         }
         if (user !== null && user.sub === job.principalId) {
             if (job.active) {
-                status = [<Link to={"#"} className={"w-100 btn custom-button-green text-light"}>Zlecenie aktywne - zmień status</Link>]
+                status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light"}>Zlecenie aktualne</p>]
             } else {
-                status = [<Link to={"#"} className={"w-100 btn custom-button-red "}>Zlecenie nieaktywne - zmień status -
-                    zmień</Link>]
+                status = [<p className={"w-100 p-2 mb-0 text-center  custom-button-red text-light"}>Zlecenie nieaktywne - zmień status -
+                    zmień</p>]
             }
-            status[1]= <Link className={"w-100 btn custom-button-red text-light"}  onClick={deleteJob}><FontAwesomeIcon icon={faTrash}/>Usuń zlecenie</Link>
+            status[1]= <Link to={`./${job.id}/edit`} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}><FontAwesomeIcon className={"mr-1"} icon={faEdit}/>Edytuj zlecenie</Link>
+            status[2]=<Link to={"#"} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}><FontAwesomeIcon className={"mr-1"} icon={faStarHalfAlt}/>Zmień status</Link>
+            status[3]= <Link className={"w-100 btn text-light"}  onClick={deleteJob}><FontAwesomeIcon className={"mr-1"} icon={faTrash}/>Usuń zlecenie</Link>
         }
     }
 
     if(error == null) {
         if (Object.keys(job).length === 0) {
-            return (<div className="w-100 mt-3 d-flex align-items-center">
-                <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
-                    <Row>
-                        <Col sm={2}>
-                            <FontAwesomeIcon icon={faSpinner} size={"5x"} className="mx-auto" color={"#4aba70"}/>
-                        </Col>
-                        <Col sm={10}>
-                            <h4 className="alert-heading text-light">Ładujemy zlecenie</h4>
-                            <p className={"text-light"}>Daj nam jeszcze chwileczkę :)</p>
-                        </Col>
-                    </Row>
-                </div>
-            </div>)
+            return <LoadingCard />
         }
     }
     if (error != null) {

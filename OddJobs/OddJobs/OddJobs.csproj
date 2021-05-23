@@ -43,7 +43,9 @@
         <Content Include="ClientApp\src\components\css\detailsStyle.css" />
         <Content Include="ClientApp\src\components\css\formStyle.css" />
         <Content Include="ClientApp\src\components\DetailsMap.js" />
+        <Content Include="ClientApp\src\components\EditJob.js" />
         <Content Include="ClientApp\src\components\jobDetails.js" />
+        <Content Include="ClientApp\src\components\Loading.js" />
         <Content Include="ClientApp\src\components\NavMenu.js" />
         <Content Include="ClientApp\src\components\FormMap.js" />
         <Content Include="ClientApp\src\components\SubMenu.js" />

@@ -11,6 +11,7 @@ import JobDetails from "./components/jobDetails";
 
 import './custom.css'
 import {Login} from "./components/api-authorization/Login";
+import EditJobForm from "./components/EditJob";
 
 
 export default class App extends Component {
@@ -21,6 +22,7 @@ export default class App extends Component {
       <Layout>
         <Route exact path='/' component={LeafletMap} />
           <AuthorizeRoute path='/add' component={AddJobForm} />
+          <AuthorizeRoute path='/jobOrder/:id/edit' component={EditJobForm} />
           <Route exact path="/jobOrder/:id" component={JobDetails} />
           <Route path='/map' component={LeafletMap} />
           <Route path='/login' component={Login} action={LoginActions.Login} />

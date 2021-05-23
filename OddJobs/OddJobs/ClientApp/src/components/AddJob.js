@@ -47,7 +47,7 @@ const AddJobForm = () => {
         <Row style={{marginLeft: "0px"}} className={"w-100 mt-3  d-flex align-items-center"}>
             <Form style={{width: '80%'}} className={"mx-auto "} onSubmit={handleSubmit} >
                 <Row>
-                    <h4  className={" mx-auto text-light pb-4"}> Dodaj zlecenie</h4>
+                    <h4  className={" mx-auto text-light pb-4"}>Dodaj zlecenie</h4>
                 </Row>
                 <Row>
                     <Col>
@@ -57,15 +57,22 @@ const AddJobForm = () => {
                         </FormGroup>
                         <FormGroup>
                             {/*<Label for="Description">Opis zlecenia</Label>*/}
-                            <Input type="textarea" style={{resize: "none"}} onChange={(e) => setDescription(e.target.value)} name="Description" id="description" placeholder="Opis Zlecenia" rows={10} />
+                            <Input type="textarea" style={{resize: "none"}} onChange={(e) => setDescription(e.target.value)}
+                                   name="Description" id="description" placeholder="Opis Zlecenia" rows={10} />
                         </FormGroup>
                         <FormGroup>
                             {/*<Label for="salary">Wynagrodzenia</Label>*/}
-                            <Input type="number" onChange={(e) => setProposedPayment(e.target.value)} name="salary" id="salary" placeholder="Wynagrodzenie" step="0.01" min="0"/>
+                            <div className="input-icon input-icon-right">
+                                <Input type="number" onChange={(e) => setProposedPayment(e.target.value)} 
+                                       name="salary" id="salary" placeholder="Wynagrodzenie" step="0.01" min="0"/>
+                                <i className={"text-light"}>zł</i>
+                            </div>
                         </FormGroup>
                         <FormGroup>
                             {/*<Label for="date">Data</Label>*/}
-                            <Input onChange={(e) => setDate(e.target.value)} placeholder="Data rozpoczęcia zlecenia" name="date" id="date" onFocus={(e) => { console.log(e); e.target.type='date'}} onBlur={(e) => { if(!e.target.value) e.target.type='text'}}/>
+                            <Input onChange={(e) => setDate(e.target.value)} placeholder="Data rozpoczęcia zlecenia" name="date" id="date" 
+                                   onFocus={(e) => {e.target.type='date'}} 
+                                   onBlur={(e) => { if(!e.target.value) e.target.type='text'}}/>
                         </FormGroup>
                     </Col>
                 <Col>

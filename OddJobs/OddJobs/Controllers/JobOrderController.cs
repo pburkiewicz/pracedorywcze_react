@@ -46,6 +46,22 @@ namespace OddJobs.Controllers
             return NotFound();
         }
         
+        [HttpPut("api/{id}")]
+        public async Task<IActionResult> UpdateJob(int id, [FromBody] JobForm jobForm)
+        {
+            var job = await _context.JobOrders.FindAsync(id);
+            if (job == null) return NotFound();
+            job.Title = jobForm.Title;
+            job.Description = jobForm.Description;
+            job.Latitude = jobForm.Lat;
+            job.Longitude = jobForm.Lng;
+            job.ProposedPayment = jobForm.ProposedPayment;
+            job.Address = jobForm.Address;
+            job.StartDate = jobForm.Date;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+        
         [HttpDelete("api/{id}")]
         public async Task<IActionResult> DeleteJob(int id)
         {
@@ -53,7 +69,6 @@ namespace OddJobs.Controllers
             _context.Entry(job).State = EntityState.Deleted;
             await _context.SaveChangesAsync();
             return Ok();
-            // return NotFound();
         }
         
         [HttpPost("add")]
