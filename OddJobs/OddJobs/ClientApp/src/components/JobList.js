@@ -1,5 +1,10 @@
 import React, {useState, useEffect} from "react";
 import DataTable from 'react-data-table-component';
+import {
+    faLink, faPhone
+} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
 
 const columns = [
     {
@@ -7,6 +12,7 @@ const columns = [
         selector: 'title',
         sortable: true,
         center: true
+        
     },
     {
         name: 'Opis',
@@ -34,7 +40,11 @@ const columns = [
     {
         name: 'Szczegóły',
         selector: 'link',
-        center: true
+        center: true,
+        cell: row => 
+            <a href={row.link}>
+                <FontAwesomeIcon icon={faLink}  size="3x"/>
+            </a>
     }
 ];
 
@@ -43,8 +53,11 @@ function JobList (props) {
     const [position,setPosition] = useState(null);
     const [jobs,setJobs] = useState(null);
     const [loading, setLoading] = useState( true);
-    const [buff,setBuff] = useState( 20);
+    const [buff,setBuff] = useState( 5);
+    const [clicked, setClicked] = useState(["active","",""]);
     const [content,setContent] = useState(null);
+    const [address,setAddress] = useState("");
+    
     useEffect(()=>{
         localize();
     },[])
@@ -60,6 +73,8 @@ function JobList (props) {
             return <h3 style={{color: props.color}}>Niestety w tej okolicy nie ma żadnych dostępnych zleceń...</h3>
         }
         return <DataTable
+            highlightOnHover
+            pagination
             theme = "dark"
             title="Zlecenia w twojej okolicy"
             columns={columns}
@@ -77,19 +92,12 @@ function JobList (props) {
 
     const fetchData = async() => {
         if (position==null) return;
-        console.log("start fetch\n");
-        console.log("jobOrder/fetchData/" +
-            position[0] +
-            "/" + position[1] +
-            "/" + buff);
         const response = await fetch("jobOrder/fetchData/" +
             position[0] +
             "/" + position[1] +
             "/" + buff);
         const jobs =await response.json();
-        console.log(jobs);
-        const data = connectWithDistance(jobs);
-        console.log(data);
+        const data = connectWithDistance(jobs);;
         setJobs( data);
         setLoading(false);
     }
@@ -120,10 +128,49 @@ function JobList (props) {
             : renderJobTable(jobs));
     },[loading]);
             
-    console.log(position);        
+
+
+   const changeBuff = (num) =>
+   {
+       let x = 5;
+       if (num === 1)
+       {
+           x = 10;
+           setClicked(["","active",""])
+       }
+       else if (num === 2)
+       {
+           x = 20;
+           setClicked(["","","active"])
+       }
+       else
+       {
+           setClicked(["active","",""])
+       }
+       if (x!==buff)
+       {
+           setBuff(x);
+           setLoading(true);
+           fetchData();
+       }
+   }
+
     return (
-        <div>
-        <h1 style={{color: props.color}} id="tableLabel" >Dostępne prace</h1>
+        <div className="w-90 p-3">
+            <div className="input-group mb-3">
+                <input type="text" className="form-control" placeholder="Address" value={address}/>
+                    <div className="input-group-append">
+                        <button className="btn btn-success" type="submit">Search</button>
+                    </div>
+            </div>
+            <div className="row">
+                <h1 className="col-md-6" style={{color: props.color}} id="tableLabel" >Dostępne prace</h1>
+                <div className="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
+                        <button className={"btn btn-primary btn-sm " + clicked[0]} onClick={() => changeBuff(0)}> 5 km</button>
+                        <button className={"btn btn-primary btn-sm " + clicked[1]} onClick={() => changeBuff(1)}> 10 km</button>
+                        <button className={"btn btn-primary btn-sm " + clicked[2]} onClick={() => changeBuff(2)}> 20 km</button>
+                </div>
+            </div>
         {content}
         </div>
     );
