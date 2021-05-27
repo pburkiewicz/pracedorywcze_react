@@ -31,7 +31,7 @@ namespace OddJobs.Controllers
 
         //https://localhost:5001/JobOrder/FetchData/l=18.997853&r=18.973813&u=50.199828&d=50.193317
         [HttpGet("fetchdata/{left:double}/{right:double}/{up:double}/{down:double}")]
-        public IEnumerable<JobOrder> FetchDataBorders(double left,double right, double up, double down)
+        public IEnumerable<JobOrder> FetchData(double left,double right, double up, double down)
         {
             return (from jobOrder in _context.JobOrders
                 where jobOrder.Active && jobOrder.Latitude>down && jobOrder.Latitude<up &&

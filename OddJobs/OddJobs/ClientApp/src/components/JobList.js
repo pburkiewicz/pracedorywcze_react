@@ -135,7 +135,7 @@ function JobList (props) {
                 payment: job['proposedPayment'],
                 activeData: pad(date.getDate(),2) + '.' + pad(date.getMonth(),2) + ' '+ pad(date.getHours(),2) + ':' + pad(date.getMinutes(),2),
                 distance:construct['item2'].toFixed(2) + ' km',
-                link:'/list/' + job['id'],
+                link: '/jobOrder/' + job['id'],
             })
         })
         return data;
@@ -197,9 +197,9 @@ function JobList (props) {
             <div className="row">
                 <h1 className="col-md-6" style={{color: props.color}} id="tableLabel" >Dostępne prace</h1>
                 <div className="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
-                        <button className={"btn btn-primary btn-sm " + clicked[0]} onClick={() => changeBuff(0)}> 5 km</button>
-                        <button className={"btn btn-primary btn-sm " + clicked[1]} onClick={() => changeBuff(1)}> 10 km</button>
-                        <button className={"btn btn-primary btn-sm " + clicked[2]} onClick={() => changeBuff(2)}> 20 km</button>
+                        <button className={"btn btn-success btn-sm " + clicked[0]} onClick={() => changeBuff(0)}> 5 km</button>
+                        <button className={"btn btn-success btn-sm " + clicked[1]} onClick={() => changeBuff(1)}> 10 km</button>
+                        <button className={"btn btn-success btn-sm " + clicked[2]} onClick={() => changeBuff(2)}> 20 km</button>
                 </div>
             </div>
         {content}

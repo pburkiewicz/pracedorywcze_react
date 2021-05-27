@@ -272,6 +272,7 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="ClientApp\node_modules" />
+      <Folder Include="Migrations" />
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="ClientApp\node_modules\leaflet-control-geocoder\**" />
