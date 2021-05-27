@@ -24,9 +24,14 @@ class Map extends React.Component {
     
     
     componentDidMount() {
+        this.isMountedVal = 1
         this.map();
     }
     
+    componentWillUnmount() {
+        this.isMountedVal = 0
+    }
+
     map() {
         this.mapBox = L.map('map').setView(this.state.position, this.state.zoom);
         this.mapBox.locate({setView : true, maxZoom: 13});
@@ -43,7 +48,7 @@ class Map extends React.Component {
         const bounds = this.mapBox.getBounds();
         const zoom = this.mapBox.getZoom()
         const position = this.mapBox.getCenter();
-        //console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
+        console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
         if (zoom < 11) {
             this.markerLayer.clearLayers();
             this.setState({
@@ -56,8 +61,9 @@ class Map extends React.Component {
             zoom: zoom,
             position: position
         });
-        console.log(this.state.bigBounds);
+        //console.log(this.state.bigBounds);
         if (this.ControlSetBigBounds(bounds)) return;
+        if (this.isMountedVal===0) return;
         const response = await fetch("jobOrder/fetchData/" +
             this.state.bigBounds[3] +
             "/" + this.state.bigBounds[2] +
@@ -65,8 +71,8 @@ class Map extends React.Component {
             "/" + this.state.bigBounds[1]);
         const jobs =await response.json();
         this.markerLayer.clearLayers();
-        console.log("after fetch\n");
-        console.log(jobs);
+        //console.log("after fetch\n");
+        //console.log(jobs);
         this.addIcons(jobs);
     }
     
@@ -102,8 +108,8 @@ class Map extends React.Component {
     SetBigBounds(bounds) {
         const verticalHole = bounds.getNorth() - bounds.getSouth();
         const horizontalHole = bounds.getEast() - bounds.getWest();
-        console.log(bounds)
-        console.log(verticalHole, "\t" ,horizontalHole);
+        //console.log(bounds)
+        //console.log(verticalHole, "\t" ,horizontalHole);
         this.setState({
             bigBounds: [bounds.getNorth()+verticalHole*this.props.resolution,
                 bounds.getSouth()-verticalHole*this.props.resolution,

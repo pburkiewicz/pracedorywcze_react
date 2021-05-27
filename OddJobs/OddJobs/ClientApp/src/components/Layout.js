@@ -23,6 +23,7 @@ export class Layout extends Component {
                   
               </Row>
           </Container>
+      </div>
     );
   }
 }
