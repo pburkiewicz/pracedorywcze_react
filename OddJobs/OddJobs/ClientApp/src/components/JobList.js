@@ -57,6 +57,7 @@ function JobList (props) {
     const [clicked, setClicked] = useState(["active","",""]);
     const [content,setContent] = useState(null);
     const [address,setAddress] = useState("");
+
     
     useEffect(()=>{
         localize();
@@ -64,7 +65,7 @@ function JobList (props) {
     useEffect(()=>{
         setLoading(true);
         fetchData();
-    },[position])
+    },[position, buff])
 
 
     const renderJobTable = (jobs) => {
@@ -85,8 +86,28 @@ function JobList (props) {
     const localize = () => {
         navigator.geolocation.getCurrentPosition(getPosition);
     }
+    
+    const adrStr = (adr) =>
+    {
+        let adr_str = adr['city']+', ' +adr['road']
+        if (adr['house_number']) adr_str+=', ' + adr['house_number'];
+        adr_str+=', ' + adr['postcode'];
+        return adr_str;
+    }
+    
+    const getLocation= async() =>
+    {
+        
+        const response =  await fetch("https://nominatim.openstreetmap.org/search?q="+address+ "&format=json&country=pl&limit=1&addressdetails=1");
+        const info =await response.json();
+        setPosition([info[0]['lat'],info[0]['lon']]);
+        setAddress(adrStr(info[0]['address']));
+    }    
 
-    const getPosition =(pos) => {
+    const getPosition =async(pos) => {
+        const response =  await fetch("https://nominatim.openstreetmap.org/reverse?lat="+pos.coords.latitude+"&lon="+pos.coords.longitude + "&format=json&country=pl");
+        const info =await response.json();
+        setAddress(adrStr(info['address']));
         setPosition([pos.coords.latitude, pos.coords.longitude] );
     }
 
@@ -97,7 +118,7 @@ function JobList (props) {
             "/" + position[1] +
             "/" + buff);
         const jobs =await response.json();
-        const data = connectWithDistance(jobs);;
+        const data = connectWithDistance(jobs);
         setJobs( data);
         setLoading(false);
     }
@@ -150,17 +171,20 @@ function JobList (props) {
        if (x!==buff)
        {
            setBuff(x);
-           setLoading(true);
-           fetchData();
        }
    }
+
+    const handleInput = event =>
+    {
+        setAddress(event.target.value)
+    }
 
     return (
         <div className="w-90 p-3">
             <div className="input-group mb-3">
-                <input type="text" className="form-control" placeholder="Address" value={address}/>
+                <input type="text" className="form-control" onChange={handleInput} placeholder="Address" value={address}/>
                     <div className="input-group-append">
-                        <button className="btn btn-success" type="submit">Search</button>
+                        <button className="btn btn-success" onClick={getLocation} type="submit">Search</button>
                     </div>
             </div>
             <div className="row">
