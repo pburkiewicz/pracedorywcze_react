@@ -128,12 +128,13 @@ function JobList (props) {
         jobs.map( construct =>
         {
             const job = construct['item1'];
+            const date = new Date(job['expirationTime']);
             data.push({
                 title: job['title'] ,
                 description: job['description'],
                 payment: job['proposedPayment'],
-                activeData: job['expirationTime'],
-                distance:construct['item2'],
+                activeData: pad(date.getDate(),2) + '.' + pad(date.getMonth(),2) + ' '+ pad(date.getHours(),2) + ':' + pad(date.getMinutes(),2),
+                distance:construct['item2'].toFixed(2) + ' km',
                 link:'/list/' + job['id'],
             })
         })
@@ -174,6 +175,12 @@ function JobList (props) {
        }
    }
 
+    const  pad =(n, width, z) =>{
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+    }
+    
     const handleInput = event =>
     {
         setAddress(event.target.value)
