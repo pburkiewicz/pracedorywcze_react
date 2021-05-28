@@ -13,15 +13,19 @@
     "leaflet": "^1.7.1",
     "leaflet-geosearch": "^3.3.2",
     "leaflet.locatecontrol": "^0.73.0",
+    "leaflet.markercluster": "^1.5.0",
     "merge": "^1.2.1",
     "oidc-client": "^1.9.0",
-    "react-dom": "^16.0.0",
+    "react": "^17.0.2",
+    "react-data-table-component": "^6.11.7",
+    "react-dom": "^17.0.2",
     "react-router": "^5.1.2",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.4",
     "reactstrap": "^8.4.1",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "styled-components": "^5.3.0"
   },
   "devDependencies": {
     "ajv": "^6.9.1",

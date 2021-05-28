@@ -3,11 +3,12 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {greenIcon} from "./Icons"
 import 'leaflet.locatecontrol';
+import 'leaflet.markercluster';
 import Popup from "./Popup"
 import './css/popup.css';
 import ReactDOMServer from 'react-dom/server';
 import {BrowserRouter} from "react-router-dom";
-
+import {MarkerClusterGroup} from "leaflet.markercluster/src";
 
 
 class Map extends React.Component {
@@ -17,11 +18,10 @@ class Map extends React.Component {
             position: [51.981497, 20.143433],
             zoom: 7,
             bounds: null,
-            bigBounds: null
+            bigBounds: [51, 26, 50, 13]
         };
         this.OnUpdateMarkers = this.OnUpdateMarkers.bind(this);
     }
-    
     
     componentDidMount() {
         this.isMountedVal = 1
@@ -33,11 +33,11 @@ class Map extends React.Component {
     }
 
     map() {
-        this.mapBox = L.map('map').setView(this.state.position, this.state.zoom);
+        this.mapBox = L.map('map', {maxZoom: 18}).setView(this.state.position, this.state.zoom);
         this.mapBox.locate({setView : true, maxZoom: 13});
         L.control.locate().addTo(this.mapBox);
         this.mapBox.on('moveend',this.OnUpdateMarkers);
-        this.markerLayer = L.layerGroup().addTo(this.mapBox);
+        this.markerLayer = new MarkerClusterGroup()
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.mapBox);
@@ -49,30 +49,20 @@ class Map extends React.Component {
         const zoom = this.mapBox.getZoom()
         const position = this.mapBox.getCenter();
         console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
-        if (zoom < 11) {
-            this.markerLayer.clearLayers();
-            this.setState({
-                bigBounds: null
-            })
-            return;
-        }
         this.setState({
             bounds: bounds,
             zoom: zoom,
-            position: position
+            position: position,
         });
-        //console.log(this.state.bigBounds);
         if (this.ControlSetBigBounds(bounds)) return;
-        if (this.isMountedVal===0) return;
+        if (this.isMountedVal === 0) return;
         const response = await fetch("jobOrder/fetchData/" +
             this.state.bigBounds[3] +
             "/" + this.state.bigBounds[2] +
             "/" + this.state.bigBounds[0] +
             "/" + this.state.bigBounds[1]);
-        const jobs =await response.json();
+        const jobs = await response.json();
         this.markerLayer.clearLayers();
-        //console.log("after fetch\n");
-        //console.log(jobs);
         this.addIcons(jobs);
     }
     
@@ -80,9 +70,11 @@ class Map extends React.Component {
     {
         icons.forEach((item, index) =>
         {
-            const marker = L.marker([item['latitude'], item['longitude']], {icon: greenIcon}).addTo(this.markerLayer)
+            const marker = L.marker([item['latitude'], item['longitude']], {icon: greenIcon})
                 .bindPopup(ReactDOMServer.renderToString(<BrowserRouter><Popup id={index} item={item} style={{background: 'gray', backgroundColor: 'gray'}}/></BrowserRouter>))
+            this.markerLayer.addLayer(marker)
         })
+        this.mapBox.addLayer(this.markerLayer);
     }
 
     render() {
@@ -90,26 +82,35 @@ class Map extends React.Component {
     }
 
     ControlSetBigBounds(bounds) {
+        console.log("aaa")
+        console.log(this.state.bigBounds)
         if (this.state.bigBounds==null) {
             this.SetBigBounds(bounds)
+            console.log("7")
             return false;
         }
-        if (this.state.bigBounds[0]< bounds.getNorth()
-            || this.state.bigBounds[1]> bounds.getSouth()
-            || this.state.bigBounds[2]< bounds.getEast()
-            ||this.state.bigBounds[3]> bounds.getWest())
+        if (this.state.bigBounds[0]<= bounds.getNorth()
+            || this.state.bigBounds[1]>= bounds.getSouth()
+            || this.state.bigBounds[2]<= bounds.getEast()
+            ||this.state.bigBounds[3]>= bounds.getWest())
         {
-            this.SetBigBounds(bounds)
+            const verticalHole = bounds.getNorth() - bounds.getSouth();
+            const horizontalHole = bounds.getEast() - bounds.getWest();
+            this.setState({
+                bigBounds: [bounds.getNorth() + verticalHole * this.props.resolution,
+                    bounds.getSouth() - verticalHole * this.props.resolution,
+                    bounds.getEast() + horizontalHole * this.props.resolution,
+                    bounds.getWest() - horizontalHole * this.props.resolution]
+            })
             return false;
         }
         return true;
     }
 
+
     SetBigBounds(bounds) {
         const verticalHole = bounds.getNorth() - bounds.getSouth();
         const horizontalHole = bounds.getEast() - bounds.getWest();
-        //console.log(bounds)
-        //console.log(verticalHole, "\t" ,horizontalHole);
         this.setState({
             bigBounds: [bounds.getNorth()+verticalHole*this.props.resolution,
                 bounds.getSouth()-verticalHole*this.props.resolution,
