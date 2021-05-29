@@ -16,9 +16,9 @@ class Map extends React.Component {
         super(props)
         this.state = {
             position: [51.981497, 20.143433],
-            zoom: 7,
+            zoom: 6,
             bounds: null,
-            bigBounds: [51, 26, 50, 13]
+            bigBounds: null
         };
         this.OnUpdateMarkers = this.OnUpdateMarkers.bind(this);
     }
@@ -49,6 +49,13 @@ class Map extends React.Component {
         const zoom = this.mapBox.getZoom()
         const position = this.mapBox.getCenter();
         console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
+        if (zoom < 7) {
+            this.markerLayer.clearLayers();
+            this.setState({
+                bigBounds: null
+            })
+            return;
+        }
         this.setState({
             bounds: bounds,
             zoom: zoom,
@@ -56,6 +63,7 @@ class Map extends React.Component {
         });
         if (this.ControlSetBigBounds(bounds)) return;
         if (this.isMountedVal === 0) return;
+        console.log(this.state.bigBounds)
         const response = await fetch("jobOrder/fetchData/" +
             this.state.bigBounds[3] +
             "/" + this.state.bigBounds[2] +
@@ -89,13 +97,28 @@ class Map extends React.Component {
             console.log("7")
             return false;
         }
-        if (this.state.bigBounds[0]<= bounds.getNorth()
-            || this.state.bigBounds[1]>= bounds.getSouth()
-            || this.state.bigBounds[2]<= bounds.getEast()
-            ||this.state.bigBounds[3]>= bounds.getWest())
+        const verticalHole = bounds.getNorth() - bounds.getSouth();
+        const horizontalHole = bounds.getEast() - bounds.getWest();
+        //
+        // if (this.state.bigBounds[0] > bounds.getNorth()+ verticalHole
+        //     || this.state.bigBounds[1] < bounds.getSouth()- verticalHole
+        //     || this.state.bigBounds[2]> bounds.getEast()+ verticalHole
+        //     ||this.state.bigBounds[3]< bounds.getWest()- verticalHole) {
+        //     this.setState({
+        //         bigBounds: [bounds.getNorth() - verticalHole,
+        //             bounds.getSouth() + verticalHole ,
+        //             bounds.getEast() - horizontalHole ,
+        //             bounds.getWest() + horizontalHole ]
+        //     })
+        //     return false;
+        // }
+        
+        if (this.state.bigBounds[0]< bounds.getNorth()
+            || this.state.bigBounds[1]> bounds.getSouth()
+            || this.state.bigBounds[2]< bounds.getEast()
+            ||this.state.bigBounds[3]> bounds.getWest())
         {
-            const verticalHole = bounds.getNorth() - bounds.getSouth();
-            const horizontalHole = bounds.getEast() - bounds.getWest();
+           
             this.setState({
                 bigBounds: [bounds.getNorth() + verticalHole * this.props.resolution,
                     bounds.getSouth() - verticalHole * this.props.resolution,
