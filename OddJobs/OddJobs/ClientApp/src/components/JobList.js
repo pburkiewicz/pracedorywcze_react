@@ -4,49 +4,10 @@ import {
     faLink, faPhone
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import authService from "./api-authorization/AuthorizeService";
 
 
-const columns = [
-    {
-        name: 'Tytuł',
-        selector: 'title',
-        sortable: true,
-        center: true
-        
-    },
-    {
-        name: 'Opis',
-        selector: 'description',
-        center: true
-    },
-    {
-        name: 'Wynagrodzenie',
-        selector: 'payment',
-        sortable: true,
-        center: true
-    },
-    {
-        name: 'Aktywne Do',
-        selector: 'activeData',
-        sortable: true,
-        center: true
-    },
-    {
-        name: 'Odległość',
-        selector: 'distance',
-        sortable: true,
-        center: true
-    },
-    {
-        name: 'Szczegóły',
-        selector: 'link',
-        center: true,
-        cell: row => 
-            <a href={row.link}>
-                <FontAwesomeIcon icon={faLink}  size="3x"/>
-            </a>
-    }
-];
+
 
 function JobList (props) {
 
@@ -57,26 +18,105 @@ function JobList (props) {
     const [clicked, setClicked] = useState(["active","",""]);
     const [content,setContent] = useState(null);
     const [address,setAddress] = useState("");
+    const [myOrders,setMyOrders] = useState(false);
+    const [user, setUser] = useState(null);
+    const [columns, setColumns] = useState(null);
 
+    const conditionalRowStyles = [
+        {
+            when: row => row.status === false,
+            style: {
+                backgroundColor: 'darkred'
+            }
+        }];
+    
+    let col = [
+        {
+            name: 'Tytuł',
+            selector: 'title',
+            sortable: true,
+            center: true
+
+        },
+        {
+            name: 'Opis',
+            selector: 'description',
+            center: true
+        },
+        {
+            name: 'Wynagrodzenie',
+            selector: 'payment',
+            sortable: true,
+            center: true
+        },
+        {
+            name: 'Aktywne Do',
+            selector: 'activeData',
+            sortable: true,
+            center: true
+        },
+        { name: 'Odległość',
+            selector: 'distance',
+            sortable: true,
+            center: true,
+            omit: false
+        },
+        {
+            name: 'Status',
+            selector: 'status',
+            sortable: true,
+            center: true,
+            omit: true
+        },
+        {
+            name: 'Szczegóły',
+            selector: 'link',
+            center: true,
+            cell: row =>
+                <a href={row.link}>
+                    <FontAwesomeIcon icon={faLink}  size="3x"/>
+                </a>
+        }
+    ];
     
     useEffect(()=>{
+        setColumns(col);
+        (async () => {
+            setUser(await authService.getUser());
+        })();
+        setUser( authService.getUser());
         localize();
     },[])
+
+    useEffect(()=>{
+        const len = col.length;
+        if (myOrders===true) {
+            col[len-3].omit = true;
+            col[len-2].omit = false;
+        }
+        else {
+            col[len-3].omit = false;
+            col[len-2].omit = true;
+        }
+    setColumns(col);
+    },[myOrders])
+    
     useEffect(()=>{
         setLoading(true);
         fetchData();
-    },[position, buff])
+    },[position, buff, myOrders])
 
 
     const renderJobTable = (jobs) => {
         if (!jobs.length)
         {
-            return <h3 style={{color: props.color}}>Niestety w tej okolicy nie ma żadnych dostępnych zleceń...</h3>
+            return <h3 style={{color: props.color}}>Brak dostępnych zleceń...</h3>
         }
         return <DataTable
             highlightOnHover
             pagination
             theme = "dark"
+            conditionalRowStyles = {conditionalRowStyles}
             title="Zlecenia w twojej okolicy"
             columns={columns}
             data={jobs}
@@ -110,13 +150,22 @@ function JobList (props) {
         setAddress(adrStr(info['address']));
         setPosition([pos.coords.latitude, pos.coords.longitude] );
     }
+    
 
     const fetchData = async() => {
-        if (position==null) return;
-        const response = await fetch("jobOrder/fetchData/" +
-            position[0] +
-            "/" + position[1] +
-            "/" + buff);
+        let response;
+        if (myOrders===true)
+        {
+            if (user===null) window.location.replace('/authentication/login');
+            response = await fetch("jobOrder/fetchData/" + user.name);
+        }
+        else {
+            if (position == null) return;
+            response = await fetch("jobOrder/fetchData/" +
+                position[0] +
+                "/" + position[1] +
+                "/" + buff)
+        }
         const jobs =await response.json();
         const data = connectWithDistance(jobs);
         setJobs( data);
@@ -125,7 +174,19 @@ function JobList (props) {
 
     const connectWithDistance = (jobs) => {
         const data = [];
-        jobs.map( construct =>
+        if (myOrders)jobs.map( job =>
+        {
+            const date = new Date(job['expirationTime']);
+            data.push({
+                title: job['title'] ,
+                description: job['description'],
+                payment: job['proposedPayment'],
+                activeData: pad(date.getDate(),2) + '.' + pad(date.getMonth(),2) + ' '+ pad(date.getHours(),2) + ':' + pad(date.getMinutes(),2),
+                status: job['active']? 'aktywne' : 'wygasłe',
+                link: '/jobOrder/' + job['id'],
+            })
+        })
+        else jobs.map( construct =>
         {
             const job = construct['item1'];
             const date = new Date(job['expirationTime']);
@@ -185,22 +246,34 @@ function JobList (props) {
     {
         setAddress(event.target.value)
     }
-
+    
+    
     return (
         <div className="w-90 p-3">
             <div className="input-group mb-3">
                 <input type="text" className="form-control" onChange={handleInput} placeholder="Address" value={address}/>
                     <div className="input-group-append">
-                        <button className="btn btn-success" onClick={getLocation} type="submit">Search</button>
+                        <button className="btn btn-success" onClick={getLocation} type="submit">Szukaj</button>
                     </div>
             </div>
             <div className="row">
-                <h1 className="col-md-6" style={{color: props.color}} id="tableLabel" >Dostępne prace</h1>
-                <div className="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
+                <h1 className="col-md-6" style={{color: props.color}} id="tableLabel" >{(myOrders === false) ? 'Dostępne prace' : 'Twoje zlecenia'}</h1>
+                
+                
+                    {
+                        (myOrders === false) ?
+                            <div className="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
+                            <button className="btn btn-primary btn-sm "  onClick={() => setMyOrders(true)}> Moje zlecenia</button>
                         <button className={"btn btn-success btn-sm " + clicked[0]} onClick={() => changeBuff(0)}> 5 km</button>
                         <button className={"btn btn-success btn-sm " + clicked[1]} onClick={() => changeBuff(1)}> 10 km</button>
                         <button className={"btn btn-success btn-sm " + clicked[2]} onClick={() => changeBuff(2)}> 20 km</button>
-                </div>
+                            </div>
+                        
+                            : <div className="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
+                                <button className="btn btn-primary btn-sm "  onClick={() => setMyOrders(false)}> Zlecenia </button>
+                            </div>
+                    }
+                
             </div>
         {content}
         </div>

@@ -40,7 +40,7 @@ namespace OddJobs.Controllers
         }
 
         [HttpGet("fetchdata/{lat}/{lng}/{buff}")]
-        public IEnumerable<Tuple<JobOrder, double>> FetchDataBUffer(double lat, double lng, double buff)
+        public IEnumerable<Tuple<JobOrder, double>> FetchDataBuffer(double lat, double lng, double buff)
         {
             _logger.LogDebug("{Lat}, {Lng}, {Buff}",lat, lng, buff);
             var x =  _context.JobOrders.Select(jobOrder => new
@@ -57,7 +57,16 @@ namespace OddJobs.Controllers
             _logger.LogDebug("{Count}",x.Count);
             return x;
         }
-    
+
+        [HttpGet("fetchdata/{principalName}")]
+        public IEnumerable<JobOrder> FetchDataUser(string principalName)
+        {
+            var id = (from user in _context.Users where user.UserName.Equals(principalName) select user.Id).First();
+            return (from jobOrder in _context.JobOrders
+                where jobOrder.PrincipalId.Equals(id)
+                select jobOrder).ToList();
+        }
+
 
 
         [HttpGet("api/{id:int}")]
