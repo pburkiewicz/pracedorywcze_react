@@ -62,9 +62,10 @@ const EditJobForm = (props) => {
             Address: address,
             User: user.sub
         }
+        const token = await authService.getAccessToken();
         const requestOptions = {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
             body: JSON.stringify(jobOrder)
         };
         fetch(`/joborder/api/${props.match.params.id}`, requestOptions).then(async (response)=>{

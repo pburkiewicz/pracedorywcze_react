@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using OddJobs.Data;
 using OddJobs.Models;
 using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging.EventSource;
 
 namespace OddJobs.Controllers
@@ -78,6 +79,7 @@ namespace OddJobs.Controllers
         }
         
         [HttpPut("api/{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UpdateJob(int id, [FromBody] JobForm jobForm)
         {
             var job = await _context.JobOrders.FindAsync(id);
@@ -94,6 +96,7 @@ namespace OddJobs.Controllers
         }
 
         [HttpPut("report/{id:int}")]
+        [Authorize]
         public async Task<IActionResult> ReportJob(int id, [FromBody] string userId)
         {
             var job = await _context.JobOrders.FindAsync(id);
@@ -104,6 +107,7 @@ namespace OddJobs.Controllers
         }
 
         [HttpDelete("api/{id:int}")]
+        [Authorize]
         public async Task<IActionResult> DeleteJob(int id)
         {
             var job = new JobOrder() { ID = id };
@@ -113,6 +117,7 @@ namespace OddJobs.Controllers
         }
         
         [HttpPost("add")]
+        [Authorize]
         public async Task<IActionResult> AddJob([FromBody] JobForm jobForm)
         {
             // var user = HttpContext.User.Identity.Name;

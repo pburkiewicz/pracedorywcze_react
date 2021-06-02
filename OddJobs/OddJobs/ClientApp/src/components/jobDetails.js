@@ -26,7 +26,7 @@ const JobDetails = (props) => {
     const [user, setUser] = useState(null)
     const [error, setError] = useState(null);
     const [modal, setModal] = useState(false);
-    
+   
     useEffect( () => {
         (async () => {
             setUser(await authService.getUser());
@@ -45,8 +45,9 @@ const JobDetails = (props) => {
             });
     }, [])
     
-    const deleteJob = () =>{
-        fetch(`/joborder/api/${props.match.params.id}`,{method: "DELETE"})
+    const deleteJob = async() =>{
+        const token = await authService.getAccessToken();
+        fetch(`/joborder/api/${props.match.params.id}`,{method: "DELETE", headers: !token ? {} : { 'Authorization': `Bearer ${token}`}})
             .then(async response => {
                 if (!response.ok) {
                     setError(response.status);

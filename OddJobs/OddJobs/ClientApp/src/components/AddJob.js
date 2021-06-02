@@ -27,9 +27,10 @@ const AddJobForm = () => {
                 Address: address,
                 User: user.sub
         }
+        const token = await authService.getAccessToken();
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
             body: JSON.stringify(jobOrder)
         };
         fetch('/joborder/add', requestOptions).then(async (response)=>{
