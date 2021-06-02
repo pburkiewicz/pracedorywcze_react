@@ -67,6 +67,16 @@ namespace OddJobs.Controllers
                 where jobOrder.PrincipalId.Equals(id)
                 select jobOrder).ToList();
         }
+        
+        [HttpGet("fetchdataReported")]
+        [Authorize(Roles="Moderator")]
+        public IEnumerable<JobOrder> FetchDataReported(string principalName)
+        {
+            var id = (from user in _context.Users where user.UserName.Equals(principalName) select user.Id).First();
+            return (from jobOrder in _context.JobOrders
+                where jobOrder.PrincipalId.Equals(id)
+                select jobOrder).ToList();
+        }
 
 
 
@@ -84,6 +94,7 @@ namespace OddJobs.Controllers
         {
             var job = await _context.JobOrders.FindAsync(id);
             if (job == null) return NotFound();
+            if (job.Principal != await _userManager.GetUserAsync(User)) return Unauthorized();
             job.Title = jobForm.Title;
             job.Description = jobForm.Description;
             job.Latitude = jobForm.Lat;
@@ -110,7 +121,9 @@ namespace OddJobs.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteJob(int id)
         {
-            var job = new JobOrder() { ID = id };
+            var job = await _context.JobOrders.FindAsync(id);
+            if (job == null) return NotFound();
+            if (job.Principal != await _userManager.GetUserAsync(User)) return Unauthorized();
             _context.Entry(job).State = EntityState.Deleted;
             await _context.SaveChangesAsync();
             return Ok();
@@ -123,6 +136,7 @@ namespace OddJobs.Controllers
             // var user = HttpContext.User.Identity.Name;
 
             var user = await _userManager.FindByIdAsync(jobForm.User);
+            
             var jobOrder = new JobOrder
             {
                 Title = jobForm.Title,
