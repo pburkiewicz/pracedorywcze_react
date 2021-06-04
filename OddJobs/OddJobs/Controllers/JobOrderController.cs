@@ -158,7 +158,33 @@ namespace OddJobs.Controllers
             
             return Ok(jobOrder);
         }
+        
+        [HttpPost("api/{jobId:int}/send")]
+        [Authorize]
+        public async Task<IActionResult> SendFirstMessage(int jobId, [FromBody] BasicMessage message)
+        {
+            var jobOrder = await _context.JobOrders.FindAsync(jobId);
+            var user = await _userManager.FindByIdAsync(message.User);
 
+            var thread = new Thread {
+                JobOrder = jobOrder,
+                InterestedUser = user,
+            };
+            
+            var mes = new Message {
+                MessageText = message.MessageText,
+                Thread = thread,
+                SendTime = DateTime.Now,
+                Sender = user,
+            };
+            
+            _context.Threads.Add(thread);
+            _context.Messages.Add(mes);
+            
+            await _context.SaveChangesAsync();
+            
+            return Ok(thread);
+        }
     }
     
     public class JobForm
@@ -170,6 +196,11 @@ namespace OddJobs.Controllers
         public double Lat { get; set; }
         public double Lng { get; set; }
         public string Address { get; set; }
+        public string User { get; set; }
+    }
+    public class BasicMessage
+    {
+        public string MessageText { get; set; }
         public string User { get; set; }
     }
 }

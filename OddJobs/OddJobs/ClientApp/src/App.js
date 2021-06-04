@@ -15,6 +15,8 @@ import JobDetails from "./components/jobDetails";
 import './custom.css'
 import {Login} from "./components/api-authorization/Login";
 import EditJobForm from "./components/EditJob";
+import MessageForm from "./components/Messages/MessageForm";
+import Chat from "./components/Messages/Chat";
 
 
 export default class App extends Component {
@@ -29,8 +31,11 @@ export default class App extends Component {
           <Route exact path="/jobOrder/:id" component={JobDetails} />
           <Route path='/map' component={LeafletMap} />
           <Route path='/list' component={JobList} />
+
           <Route path='/login' component={Login} action={LoginActions.Login} />
-        <AuthorizeRoute path='/fetch-data' component={FetchData} />
+          <AuthorizeRoute path='/jobOrder/:id/send' component={MessageForm} />
+          <AuthorizeRoute path='/messages/:id' component={Chat} />
+          <AuthorizeRoute path='/fetch-data' component={FetchData} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout>
     );

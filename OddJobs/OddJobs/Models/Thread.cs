@@ -11,10 +11,7 @@ namespace OddJobs.Models
         public Guid Id { get; set; }
 
         [Required]
-        public ApplicationUser Principal { get; set; }
-        
-        [Required]
-        public ApplicationUser Worker { get; set; }
+        public ApplicationUser InterestedUser { get; set; }
         
         [Required]
         public JobOrder JobOrder { get; set; }

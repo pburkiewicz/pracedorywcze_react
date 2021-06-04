@@ -46,6 +46,8 @@
         <Content Include="ClientApp\src\components\EditJob.js" />
         <Content Include="ClientApp\src\components\jobDetails.js" />
         <Content Include="ClientApp\src\components\Loading.js" />
+        <Content Include="ClientApp\src\components\Messages\Chat.js" />
+        <Content Include="ClientApp\src\components\Messages\MessageForm.js" />
         <Content Include="ClientApp\src\components\NavMenu.js" />
         <Content Include="ClientApp\src\components\FormMap.js" />
         <Content Include="ClientApp\src\components\reportJobPopup.js" />

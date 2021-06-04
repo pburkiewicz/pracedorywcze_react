@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace OddJobs.Models
 {
@@ -12,7 +13,6 @@ namespace OddJobs.Models
         
         public List<JobOrder> JobsDone;
         
-        // public Guid UserGuid { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string City { get; set; }

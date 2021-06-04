@@ -84,7 +84,7 @@ const JobDetails = (props) => {
                     nieaktualne</Button>
             }
             if(user !== null){
-                status[1] = <Link to={"#"} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
+                status[1] = <Link to={`./${job.id}/send`} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
                             <FontAwesomeIcon className={"mr-1"} icon={faEnvelope}/>Skontaktuj się ze zleceniodawcą
                             </Link>
                 status[2] = <Link className={"w-100 btn text-light"}  onClick={openModal}>

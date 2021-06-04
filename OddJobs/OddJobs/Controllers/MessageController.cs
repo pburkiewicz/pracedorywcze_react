@@ -1,7 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using NpgsqlTypes;
 using OddJobs.Data;
 using OddJobs.Models;
 
@@ -17,11 +22,15 @@ namespace OddJobs.Controllers
 
         public MessageController(ApplicationDbContext context, ILogger<MessageController> logger,
             UserManager<ApplicationUser> userManager) => (_context, _logger, _userManager) = (context, logger, userManager);
-        
-        // [HttpPost]
-        // public async Task<IActionResult> Send()
-        // {
-        //     
-        // }
+
+
+        [HttpGet("{threadId:Guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetMessages(Guid threadId)
+        {
+            var query = await _context.Messages.Where(message => message.Thread.Id == threadId).ToListAsync();
+            return Ok(query);
+        }
+
     }
 }
