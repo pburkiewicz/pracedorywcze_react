@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using OddJobs.Data;
@@ -12,6 +10,7 @@ using OddJobs.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 
 namespace OddJobs
 {
@@ -36,12 +35,17 @@ namespace OddJobs
             );
 
             services.AddDatabaseDeveloperPageExceptionFilter();
+            
+            //services.AddDefaultIdentity<ApplicationUser>()
+            
+            
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders();
+            
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+            services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDbContext>(); 
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
@@ -94,6 +98,8 @@ namespace OddJobs
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+            
+            
         }
     }
 }

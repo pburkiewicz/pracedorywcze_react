@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4.Extensions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +9,7 @@ using OddJobs.Data;
 using OddJobs.Models;
 using System;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging.EventSource;
+
 
 namespace OddJobs.Controllers
 {
@@ -43,20 +41,7 @@ namespace OddJobs.Controllers
         [HttpGet("fetchdata/{lat}/{lng}/{buff}")]
         public IEnumerable<Tuple<JobOrder, double>> FetchDataBuffer(double lat, double lng, double buff)
         {
-            _logger.LogDebug("{Lat}, {Lng}, {Buff}",lat, lng, buff);
-            var x =  _context.JobOrders.Select(jobOrder => new
-                {
-                    jobOrder,
-                    dist = 6371 * Math.Acos(
-                        Math.Cos(Math.PI / 180 * lat) * Math.Cos(Math.PI / 180 * jobOrder.Latitude) *
-                        Math.Cos(Math.PI / 180 * jobOrder.Longitude - Math.PI / 180 * lng) +
-                        Math.Sin(Math.PI / 180 * lat) * Math.Sin(Math.PI / 180 * jobOrder.Latitude))
-                })
-                .Where(@t => @t.jobOrder.Active && @t.dist < buff)
-                .OrderBy(@t => @t.dist).Take(100)
-                .Select(@t =>   new Tuple<JobOrder,double>(@t.jobOrder, @t.dist)).ToList();
-            _logger.LogDebug("{Count}",x.Count);
-            return x;
+            return GetByDistance(lat,lng,buff);
         }
 
         [HttpGet("fetchdata/{principalName}")]
@@ -68,17 +53,13 @@ namespace OddJobs.Controllers
                 select jobOrder).ToList();
         }
         
-        [HttpGet("fetchdataReported")]
+        [HttpGet("fetchReported/{lat}/{lng}")]
         [Authorize(Roles="Moderator")]
-        public IEnumerable<JobOrder> FetchDataReported(string principalName)
+        public   IEnumerable<Tuple<JobOrder, double>> FetchReported(double lat, double lng)
         {
-            var id = (from user in _context.Users where user.UserName.Equals(principalName) select user.Id).First();
-            return (from jobOrder in _context.JobOrders
-                where jobOrder.PrincipalId.Equals(id)
-                select jobOrder).ToList();
+        return GetByDistance(lat, lng, 500, true);
         }
-
-
+        
 
         [HttpGet("api/{id:int}")]
         public async Task<IActionResult> GetJob(int id)
@@ -94,7 +75,8 @@ namespace OddJobs.Controllers
         {
             var job = await _context.JobOrders.FindAsync(id);
             if (job == null) return NotFound();
-            if (job.Principal != await _userManager.GetUserAsync(User)) return Unauthorized();
+            var user = await _userManager.GetUserAsync(User);
+            if (job.Principal != user) return Unauthorized();
             job.Title = jobForm.Title;
             job.Description = jobForm.Description;
             job.Latitude = jobForm.Lat;
@@ -123,7 +105,8 @@ namespace OddJobs.Controllers
         {
             var job = await _context.JobOrders.FindAsync(id);
             if (job == null) return NotFound();
-            if (job.Principal != await _userManager.GetUserAsync(User)) return Unauthorized();
+            var user = await _userManager.GetUserAsync(User);
+            if (job.Principal != user) return Unauthorized();
             _context.Entry(job).State = EntityState.Deleted;
             await _context.SaveChangesAsync();
             return Ok();
@@ -157,6 +140,21 @@ namespace OddJobs.Controllers
             await _context.SaveChangesAsync();
             
             return Ok(jobOrder);
+        }
+
+        public IEnumerable<Tuple<JobOrder, double>> GetByDistance(double lat, double lng, double buff, bool report = false)
+        {
+            return  _context.JobOrders.Select(jobOrder => new
+                {
+                    jobOrder,
+                    dist = 6371 * Math.Acos(
+                        Math.Cos(Math.PI / 180 * lat) * Math.Cos(Math.PI / 180 * jobOrder.Latitude) *
+                        Math.Cos(Math.PI / 180 * jobOrder.Longitude - Math.PI / 180 * lng) +
+                        Math.Sin(Math.PI / 180 * lat) * Math.Sin(Math.PI / 180 * jobOrder.Latitude))
+                })
+                .Where(@t => @t.jobOrder.Active && @t.dist < buff && (!report || t.jobOrder.Reported))
+                .OrderBy(@t => @t.dist).Take(100)
+                .Select(@t =>   new Tuple<JobOrder,double>(@t.jobOrder, @t.dist)).ToList();
         }
 
     }

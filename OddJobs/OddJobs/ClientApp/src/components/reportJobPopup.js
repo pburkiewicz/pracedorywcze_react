@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import authService from "./api-authorization/AuthorizeService";
 
 const ReportJobPopup = ({setModal, modal, id, user}) => {
   
@@ -7,11 +8,12 @@ const ReportJobPopup = ({setModal, modal, id, user}) => {
 
     const toggle = () => setModal(!modal);
     
-    const reportJob = () => {
+    const reportJob = async () => {
         console.log(user.sub)
+        const token = await authService.getAccessToken();
         fetch(`/joborder/report/${id}`, {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
             body: JSON.stringify(user.sub)
         }).then(response => {
             if(response.ok){

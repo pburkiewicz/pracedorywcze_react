@@ -21,6 +21,8 @@ function JobList (props) {
     const [myOrders,setMyOrders] = useState(false);
     const [user, setUser] = useState(null);
     const [columns, setColumns] = useState(null);
+    const [reported, setReported] = useState(false);
+    //const [roles, setRoles] = useState("");
 
     const conditionalRowStyles = [
         {
@@ -87,6 +89,7 @@ function JobList (props) {
         setUser( authService.getUser());
         localize();
     },[])
+    
 
     useEffect(()=>{
         const len = col.length;
@@ -104,7 +107,7 @@ function JobList (props) {
     useEffect(()=>{
         setLoading(true);
         fetchData();
-    },[position, buff, myOrders])
+    },[position, buff, myOrders, reported])
 
 
     const renderJobTable = (jobs) => {
@@ -161,6 +164,11 @@ function JobList (props) {
         }
         else {
             if (position == null) return;
+            if (reported===true) {
+                const token = await authService.getAccessToken()
+                response = await fetch("jobOrder/fetchReported/" + position[0] + "/" + position[1], {method: "GET",  credentials: 'include',headers: !token ? {} : { 'Authorization': `Bearer ${token}`}});
+            }
+            else
             response = await fetch("jobOrder/fetchData/" +
                 position[0] +
                 "/" + position[1] +
@@ -170,6 +178,7 @@ function JobList (props) {
         const data = connectWithDistance(jobs);
         setJobs( data);
         setLoading(false);
+        console.log(user);
     }
 
     const connectWithDistance = (jobs) => {
@@ -248,6 +257,7 @@ function JobList (props) {
     }
     
     
+    
     return (
         <div className="w-90 p-3">
             <div className="input-group mb-3">
@@ -257,20 +267,23 @@ function JobList (props) {
                     </div>
             </div>
             <div className="row">
-                <h1 className="col-md-6" style={{color: props.color}} id="tableLabel" >{(myOrders === false) ? 'Dostępne prace' : 'Twoje zlecenia'}</h1>
+                <h1 className="col-md-6" style={{color: props.color}} id="tableLabel" >{(myOrders === false) ? ((reported===false) ? 'Dostępne prace':"Zgłoszone zlecenia") : 'Twoje zlecenia'}</h1>
                 
                 
                     {
-                        (myOrders === false) ?
+                        (myOrders === false && reported===false) ?
                             <div className="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
-                            <button className="btn btn-primary btn-sm "  onClick={() => setMyOrders(true)}> Moje zlecenia</button>
-                        <button className={"btn btn-success btn-sm " + clicked[0]} onClick={() => changeBuff(0)}> 5 km</button>
-                        <button className={"btn btn-success btn-sm " + clicked[1]} onClick={() => changeBuff(1)}> 10 km</button>
-                        <button className={"btn btn-success btn-sm " + clicked[2]} onClick={() => changeBuff(2)}> 20 km</button>
+                                
+                                <button className="btn btn-danger btn-sm "  onClick={() => setReported(true)}> Zgłoszone zlecenia</button>
+                                {(user) ?
+                                <button className="btn btn-primary btn-sm "  onClick={() => setMyOrders(true)}> Moje zlecenia</button> : null}
+                                <button className={"btn btn-success btn-sm " + clicked[0]} onClick={() => changeBuff(0)}> 5 km</button>
+                                <button className={"btn btn-success btn-sm " + clicked[1]} onClick={() => changeBuff(1)}> 10 km</button>
+                                <button className={"btn btn-success btn-sm " + clicked[2]} onClick={() => changeBuff(2)}> 20 km</button>
                             </div>
                         
                             : <div className="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
-                                <button className="btn btn-primary btn-sm "  onClick={() => setMyOrders(false)}> Zlecenia </button>
+                                <button className="btn btn-primary btn-sm "  onClick={() => {setMyOrders(false); setReported(false)}}> Zlecenia </button>
                             </div>
                     }
                 
