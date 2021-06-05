@@ -11,6 +11,7 @@ import {
     faEdit,
     faStarHalfAlt,
     faEnvelope,
+    faCheckCircle,
     faBan
 } from "@fortawesome/free-solid-svg-icons";
 import DetailsMap from "./DetailsMap";
@@ -26,6 +27,8 @@ const JobDetails = (props) => {
     const [user, setUser] = useState(null)
     const [error, setError] = useState(null);
     const [modal, setModal] = useState(false);
+    const [roles, setRoles] = useState(0);
+    const [rerender,setRerender] = useState(0);
    
     useEffect( () => {
         (async () => {
@@ -43,7 +46,16 @@ const JobDetails = (props) => {
                     setJob(order);
                 }
             });
-    }, [])
+        identity();
+    }, [rerender])
+    
+    
+
+    const identity = async() =>
+    {
+        const token = await authService.getAccessToken()
+        setRoles( await ((await fetch("jobOrder/fetchHighStatus/", {headers: !token ? {} : {'Authorization': `Bearer ${token}`}})).json()));
+    }
     
     const deleteJob = async() =>{
         const token = await authService.getAccessToken();
@@ -57,9 +69,32 @@ const JobDetails = (props) => {
             });
     }
     
+    const ReportReaction = async(status) =>{
+        const token = await authService.getAccessToken();
+        await fetch(`/joborder/ReportReaction/${job.id}/${status}`, {
+            method: "PUT",
+            headers: !token ? {} : {'Authorization': `Bearer ${token}`}
+        });
+        if (status === 0 )history.push("/list")
+        else setRerender(rerender+1);
+    }
+    
+    const makeDecisionButton = ()=>{
+        return <div className="w-100 btn-group btn-group-toggle" data-toggle="buttons">
+            <Link className={"btn text-light"}  onClick={() => ReportReaction(1)}>
+                <FontAwesomeIcon className={"mr-1"} icon={faCheckCircle}/>Autoryzuj
+            </Link>
+            <Link className={"btn text-light"}  onClick={() => ReportReaction(0)}>
+                <FontAwesomeIcon className={"mr-1"} icon={faBan}/>Zablokuj
+            </Link>
+        </div>;
+    }
+    
     const openModal = () => setModal(!modal);
     
-    let status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light "}>Zlecenie aktualne</p>];
+    
+    let status = [];
+    status[0] = <p className={"w-100 p-2 mb-0 text-center custom-button-green text-light "}>Zlecenie aktualne</p>;
     if (Object.keys(job).length !== 0) {
        
         if (user !== null && user.sub === job.principalId) {
@@ -80,16 +115,27 @@ const JobDetails = (props) => {
                        </Link>
         }else{
             if (!job.active) {
-                status = <Button active={false} size="lg" block style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
-                    nieaktualne</Button>
+                status = [<Button active={false} size="lg" block style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
+                    nieaktualne</Button>]
             }
             if(user !== null){
+                status[1] = null;
                 status[1] = <Link to={"#"} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
                             <FontAwesomeIcon className={"mr-1"} icon={faEnvelope}/>Skontaktuj się ze zleceniodawcą
                             </Link>
-                status[2] = <Link className={"w-100 btn text-light"}  onClick={openModal}>
-                            <FontAwesomeIcon className={"mr-1"} icon={faBan}/>Zgłoś</Link>
-                status[3] = <ReportJobPopup modal={modal} setModal={setModal} id={job.id} user={user}/>
+                switch (job.reported) {
+                    case 0 :status[2] = <button className={"w-100 btn text-light"} onClick={openModal}>
+                            <FontAwesomeIcon className={"mr-1"} icon={faBan}/>Zgłoś</button>
+                        status[3] = <ReportJobPopup modal={modal} setModal={setModal} id={job.id} user={user} setRerender={setRerender} rerender={rerender}/>
+                        break;
+                    case 1 : status[2] = <p className={"w-100 p-2 mb-0 text-center  custom-button-red text-light"}>
+                        <FontAwesomeIcon className={"mr-1"} icon={faExclamationTriangle}/>Oferta została zgłoszona</p>
+                        if (roles) status[3] = makeDecisionButton();
+                        break;
+                    case 2 : status[2] = <p className={"w-100 p-2 mb-0 text-center custom-button-green text-light"}>
+                        <FontAwesomeIcon className={"mr-1"} icon={faCheckCircle}/>Oferta autoryzowana przez administrację</p>
+                }
+                
             }
         }
     }
@@ -99,6 +145,7 @@ const JobDetails = (props) => {
             return <LoadingCard />
         }
     }
+    
     if (error != null) {
         if (error === 404) {
             return <div className="w-100 mt-3 d-flex align-items-center ">
@@ -131,6 +178,7 @@ const JobDetails = (props) => {
             </div>
         </div>
     }
+    
     return (
         <Row className="d-flex justify-content-center w-100 mt-3 text-light job-details">
             <Col md={6} className={" p-3 job-card"}>

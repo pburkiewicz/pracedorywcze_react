@@ -60,6 +60,23 @@ namespace OddJobs.Controllers
         return GetByDistance(lat, lng, 500, true);
         }
         
+        [HttpGet("fetchHighStatus")]
+        public int FetchStatus()
+        {
+            return User.IsInRole("Moderator") ? 1 : 0;
+        }
+        
+        [HttpPut("ReportReaction/{id:int}/{status:int}")]
+        [Authorize(Roles="Moderator")]
+        public async Task<IActionResult> ReportReaction(int id, int status)
+        {
+            var job = await _context.JobOrders.FindAsync(id);
+            if (job == null) return NotFound();
+            if (status == 1) job.Reported = 2;
+            else job.Active = false;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
 
         [HttpGet("api/{id:int}")]
         public async Task<IActionResult> GetJob(int id)
@@ -84,6 +101,7 @@ namespace OddJobs.Controllers
             job.ProposedPayment = jobForm.ProposedPayment;
             job.Address = jobForm.Address;
             job.StartDate = jobForm.Date;
+            if (job.Reported == 2) job.Reported = 0;
             await _context.SaveChangesAsync();
             return Ok();
         }
@@ -94,7 +112,7 @@ namespace OddJobs.Controllers
         {
             var job = await _context.JobOrders.FindAsync(id);
             if (job == null) return NotFound();
-            job.Reported = true;
+            job.Reported = 1;
             await _context.SaveChangesAsync();
             return Ok();
         }
@@ -129,7 +147,7 @@ namespace OddJobs.Controllers
                 ProposedPayment = jobForm.ProposedPayment,
                 Address = jobForm.Address,
                 Active = true,
-                Reported = false,
+                Reported = 0,
                 ExpirationTime = DateTime.Now.AddDays(60),
                 RegisteredTime = DateTime.Now,
                 StartDate = jobForm.Date,
@@ -152,7 +170,7 @@ namespace OddJobs.Controllers
                         Math.Cos(Math.PI / 180 * jobOrder.Longitude - Math.PI / 180 * lng) +
                         Math.Sin(Math.PI / 180 * lat) * Math.Sin(Math.PI / 180 * jobOrder.Latitude))
                 })
-                .Where(@t => @t.jobOrder.Active && @t.dist < buff && (!report || t.jobOrder.Reported))
+                .Where(@t => @t.jobOrder.Active && @t.dist < buff && (!report || t.jobOrder.Reported==1))
                 .OrderBy(@t => @t.dist).Take(100)
                 .Select(@t =>   new Tuple<JobOrder,double>(@t.jobOrder, @t.dist)).ToList();
         }

@@ -22,7 +22,7 @@ function JobList (props) {
     const [user, setUser] = useState(null);
     const [columns, setColumns] = useState(null);
     const [reported, setReported] = useState(false);
-    //const [roles, setRoles] = useState("");
+    const [roles, setRoles] = useState(0);
 
     const conditionalRowStyles = [
         {
@@ -87,9 +87,9 @@ function JobList (props) {
             setUser(await authService.getUser());
         })();
         setUser( authService.getUser());
+        identity();
         localize();
     },[])
-    
 
     useEffect(()=>{
         const len = col.length;
@@ -128,6 +128,12 @@ function JobList (props) {
 
     const localize = () => {
         navigator.geolocation.getCurrentPosition(getPosition);
+    }
+    
+    const identity = async() =>
+    {
+        const token = await authService.getAccessToken()
+        setRoles( await ((await fetch("jobOrder/fetchHighStatus/", {headers: !token ? {} : {'Authorization': `Bearer ${token}`}})).json()));
     }
     
     const adrStr = (adr) =>
@@ -178,7 +184,6 @@ function JobList (props) {
         const data = connectWithDistance(jobs);
         setJobs( data);
         setLoading(false);
-        console.log(user);
     }
 
     const connectWithDistance = (jobs) => {
@@ -273,8 +278,8 @@ function JobList (props) {
                     {
                         (myOrders === false && reported===false) ?
                             <div className="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
-                                
-                                <button className="btn btn-danger btn-sm "  onClick={() => setReported(true)}> Zgłoszone zlecenia</button>
+                                {(roles)?
+                                <button className="btn btn-danger btn-sm "  onClick={() => setReported(true)}> Zgłoszone zlecenia</button> : null}
                                 {(user) ?
                                 <button className="btn btn-primary btn-sm "  onClick={() => setMyOrders(true)}> Moje zlecenia</button> : null}
                                 <button className={"btn btn-success btn-sm " + clicked[0]} onClick={() => changeBuff(0)}> 5 km</button>

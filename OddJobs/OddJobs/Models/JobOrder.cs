@@ -29,7 +29,7 @@ namespace OddJobs.Models
         public double Longitude{ get; set;}
 
         [Required]
-        public bool Reported{ get; set;}
+        public short Reported{ get; set;}
 
         [Required]
         public bool Active{ get; set;}
