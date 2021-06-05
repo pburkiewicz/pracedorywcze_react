@@ -18,12 +18,12 @@ namespace OddJobs.Data
         public virtual DbSet<Message> Messages { get; set; }
         
         public virtual DbSet<Thread> Threads { get; set; }
-        
+
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
-
-    }
+            ;
+        }
     }
 }

@@ -24,12 +24,34 @@ namespace OddJobs.Controllers
             UserManager<ApplicationUser> userManager) => (_context, _logger, _userManager) = (context, logger, userManager);
 
 
-        [HttpGet("{threadId:Guid}")]
+        [HttpGet("api/{threadId:Guid}")]
         [Authorize]
         public async Task<IActionResult> GetMessages(Guid threadId)
         {
-            var query = await _context.Messages.Where(message => message.Thread.Id == threadId).ToListAsync();
+            var query = await _context.Messages.Where(message => message.Thread.Id == threadId)
+                .Include(m => m.Thread)
+                .Include(m => m.Sender).ToListAsync();
             return Ok(query);
+        }
+        
+        [HttpPost("api/{threadId:Guid}")]
+        [Authorize]
+        public async Task<IActionResult> SendFirstMessage(Guid threadId, [FromBody] BasicMessage message)
+        {
+            var thread = await _context.Threads.FindAsync(threadId);
+            var user = await _userManager.FindByIdAsync(message.User);
+
+            var mes = new Message {
+                MessageText = message.MessageText,
+                Thread = thread,
+                SendTime = DateTime.Now,
+                Sender = user,
+            };
+            _context.Messages.Add(mes);
+            
+            await _context.SaveChangesAsync();
+            
+            return Ok();
         }
 
     }
