@@ -91,5 +91,21 @@ namespace OddJobs.Controllers
 
             return Ok(false);
         }
+
+        [HttpGet("api/{jobId:int}/getInterestedUsers")]
+        [Authorize]
+        public async Task<IActionResult> GetInterestedUsers(int jobId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var job = await _context.JobOrders.FindAsync(jobId);
+
+            if (job == null) return NotFound();
+            if(job.PrincipalId != user.Id) return Unauthorized();
+            
+            var interestedUsers = await _context.Threads.Where(t => t.JobOrder.ID == jobId)
+                .Select(t => t.InterestedUser).ToListAsync();
+
+            return Ok(interestedUsers);
+        }
     }
 }

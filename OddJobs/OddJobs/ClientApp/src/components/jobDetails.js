@@ -11,22 +11,28 @@ import {
     faEdit,
     faStarHalfAlt,
     faEnvelope,
-    faBan
+    faBan,
+    faUserCheck,
+    faUserTie
 } from "@fortawesome/free-solid-svg-icons";
 import DetailsMap from "./DetailsMap";
 import authService from "./api-authorization/AuthorizeService";
 
 import './css/detailsStyle.css'
 import LoadingCard from "./Loading";
-import ReportJobPopup from "./reportJobPopup";
+import ReportJobPopup from "./Modals/ReportJobPopup";
+import AssignWorkerPopup from "./Modals/AssignWorkerPopup";
 
 const JobDetails = (props) => {
     const history = useHistory();
     const [job, setJob] = useState({});
     const [user, setUser] = useState(null)
     const [error, setError] = useState(null);
-    const [modal, setModal] = useState(false);
-   
+    const [reportModal, setReportModal] = useState(false);
+    const [assignWorkerModal, setAssignWorkerModal] = useState(false);
+    
+    const [fetchData, setFetchData] = useState(true);
+    
     useEffect( () => {
         (async () => {
             setUser(await authService.getUser());
@@ -39,10 +45,12 @@ const JobDetails = (props) => {
                     let order = await response.json();
                     order.startDate = new Date(order.startDate).toLocaleDateString();
                     order.registeredTime = new Date(order.registeredTime).toLocaleString();
+                    console.log(order);
                     setJob(order);
+                    setFetchData(false);
                 }
             });
-    }, [])
+    }, [fetchData])
     
     const findThread = async () => {
         const token = await authService.getAccessToken();
@@ -76,27 +84,45 @@ const JobDetails = (props) => {
             });
     }
     
-    const openModal = () => setModal(!modal);
+    const openReportModal = () => setReportModal(!reportModal);
+
+    const openAssignWorkerModal = () => setAssignWorkerModal(!assignWorkerModal);
+
+    const changeStatus = async () => {
+        const token = await authService.getAccessToken();
+        
+        fetch(`/joborder/status/${props.match.params.id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+        }).then(response => {
+            if(response.ok){
+                console.log("Zmieniono");
+                setFetchData(true);
+            }
+        })
+    }
     
     let status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light "}>Zlecenie aktualne</p>];
     if (Object.keys(job).length !== 0) {
-        console.log(job);
         if (user !== null && user.sub === job.principalId) {
             if (job.active) {
                 status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light"}>Zlecenie aktualne</p>]
             } else {
-                status = [<p className={"w-100 p-2 mb-0 text-center  custom-button-red text-light"}>Zlecenie nieaktywne - zmień status -
-                    zmień</p>]
+                status = [<p className={"w-100 p-2 mb-0 text-center custom-button-red text-light"}>Zlecenie nieaktywne</p>]
             }
-            status[1]= <Link to={`./${job.id}/edit`} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}>
+            status.push( <Link to={`./${job.id}/edit`} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}>
                         <FontAwesomeIcon className={"mr-1"} icon={faEdit}/>Edytuj zlecenie
-                       </Link>
-            status[2]= <Link to={"#"} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
+                       </Link>)
+            status.push( <Link onClick={changeStatus} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
                         <FontAwesomeIcon className={"mr-1"} icon={faStarHalfAlt}/>Zmień status
-                       </Link>
-            status[3]= <Link className={"w-100 btn text-light"}  onClick={deleteJob}>
+                       </Link>)
+            status.push(<Link className={"w-100 btn text-light"}  onClick={openAssignWorkerModal} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
+                <FontAwesomeIcon className={"mr-1"} icon={faUserCheck}/>Zleć użytkownikowi</Link>)
+            status.push(<Link className={"w-100 btn text-light"}  onClick={deleteJob}>
                         <FontAwesomeIcon className={"mr-1"} icon={faTrash}/>Usuń zlecenie
-                       </Link>
+                       </Link>)
+            status.push(<AssignWorkerPopup modal={assignWorkerModal} setModal={setAssignWorkerModal} setRefresh={setFetchData} jobId={job.id} user={user}/>)
+
         }else{
             if (!job.active) {
                 status = [<Button active={false} size="lg" block style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
@@ -106,9 +132,9 @@ const JobDetails = (props) => {
                 status[1] = <Link onClick={findThread} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
                             <FontAwesomeIcon className={"mr-1"} icon={faEnvelope}/>Skontaktuj się ze zleceniodawcą
                             </Link>
-                status[2] = <Link className={"w-100 btn text-light"}  onClick={openModal}>
+                status[2] = <Link className={"w-100 btn text-light"}  onClick={openReportModal}>
                             <FontAwesomeIcon className={"mr-1"} icon={faBan}/>Zgłoś</Link>
-                status[3] = <ReportJobPopup modal={modal} setModal={setModal} id={job.id} user={user}/>
+                status[3] = <ReportJobPopup modal={reportModal} setModal={setReportModal} id={job.id} user={user}/>
             }
         }
     }
@@ -150,6 +176,7 @@ const JobDetails = (props) => {
             </div>
         </div>
     }
+    
     return (
         <Row className="d-flex justify-content-center w-100 mt-3 text-light job-details">
             <Col md={6} className={" p-3 job-card"}>
@@ -172,6 +199,16 @@ const JobDetails = (props) => {
                         <span className={"ml-2"}>{job.address}</span>
                     </Col>
                 </Row>
+                {job.workerId != null ?
+                    <Row className={"pt-1 pb-2"}>
+                        <Col md={12}>
+                            <FontAwesomeIcon icon={faUserTie} size={"1x"} color={"#4aba70"}/>
+                            <span className={"ml-2"}>Zlecono: {job.worker.firstName} {job.worker.lastName} ({job.worker.email})</span>
+                        </Col>
+                    </Row>
+                    :
+                    []
+                }
                 <hr className={"bg-secondary mb-1 mt-1"}/>
                 <h6 className={"mt-2 mb-1"}><b>Opis: </b></h6>
                 <p style={{whiteSpace: "pre-line"}}>{job.description}</p>

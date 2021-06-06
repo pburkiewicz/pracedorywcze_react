@@ -83,8 +83,8 @@ namespace OddJobs.Controllers
         [HttpGet("api/{id:int}")]
         public async Task<IActionResult> GetJob(int id)
         {
-            var job = await _context.JobOrders.FindAsync(id);
-            if (job != null) return Ok(job);
+            var job = await _context.JobOrders.Where(j => j.ID == id).Include(j => j.Worker).ToListAsync();
+            if (job != null) return Ok(job.First());
             return NotFound();
         }
         
@@ -116,6 +116,47 @@ namespace OddJobs.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+        
+        [HttpPut("status/{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> ChangeStatus(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var job = await _context.JobOrders.FindAsync(id);
+            
+            if (job == null) return NotFound();
+            if(user.Id != job.PrincipalId) return Unauthorized();
+            
+            job.Active = !job.Active;
+
+            if (job.Active && job.WorkerId != null) {
+                job.Worker = null;
+                job.WorkerId = null;
+            }
+            
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+        
+        [HttpPut("api/{id:int}/assignWorker")]
+        [Authorize]
+        public async Task<IActionResult> AssignWorker(int id, [FromBody] string workerId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var job = await _context.JobOrders.FindAsync(id);
+            
+            if (job == null) return NotFound();
+            if(user.Id != job.PrincipalId) return Unauthorized();
+
+            var worker = await _context.ApplicationUsers.FindAsync(workerId);
+            
+            job.Active = false;
+            job.Worker = worker;
+            job.WorkerId = workerId;
+            
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
 
         [HttpDelete("api/{id:int}")]
         [Authorize]
@@ -133,8 +174,6 @@ namespace OddJobs.Controllers
         [Authorize]
         public async Task<IActionResult> AddJob([FromBody] JobForm jobForm)
         {
-            // var user = HttpContext.User.Identity.Name;
-
             var user = await _userManager.FindByIdAsync(jobForm.User);
             
             var jobOrder = new JobOrder
