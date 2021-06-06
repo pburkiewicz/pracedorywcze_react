@@ -61,7 +61,7 @@ const JobDetails = (props) => {
     
     let status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light "}>Zlecenie aktualne</p>];
     if (Object.keys(job).length !== 0) {
-       
+        console.log(job);
         if (user !== null && user.sub === job.principalId) {
             if (job.active) {
                 status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light"}>Zlecenie aktualne</p>]
@@ -80,8 +80,8 @@ const JobDetails = (props) => {
                        </Link>
         }else{
             if (!job.active) {
-                status = <Button active={false} size="lg" block style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
-                    nieaktualne</Button>
+                status = [<Button active={false} size="lg" block style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
+                    nieaktualne</Button>]
             }
             if(user !== null){
                 status[1] = <Link to={`./${job.id}/send`} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>

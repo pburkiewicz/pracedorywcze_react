@@ -54,7 +54,7 @@ const SideBar = ({ isOpen, toggle }) => (
           </NavItem>
 
           <NavItem className={"w-100"}>
-            <NavLink tag={Link} to={"/messages"} className={"p-0 pt-2"} style={{color: '#d5d5d5', textDecoration: 'none'}} >
+            <NavLink tag={Link} to={"/threads"} className={"p-0 pt-2"} style={{color: '#d5d5d5', textDecoration: 'none'}} >
               <Row>
                 <Col md={12} className={"d-flex justify-content-center"}>
                   <FontAwesomeIcon icon={faEnvelope} size={"2x"} />
