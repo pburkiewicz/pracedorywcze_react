@@ -31,7 +31,6 @@ const JobDetails = (props) => {
         (async () => {
             setUser(await authService.getUser());
         })();
-        setUser( authService.getUser());
         fetch(`/joborder/api/${props.match.params.id}`)
             .then(async response => {
                 if (!response.ok) {
@@ -44,6 +43,26 @@ const JobDetails = (props) => {
                 }
             });
     }, [])
+    
+    const findThread = async () => {
+        const token = await authService.getAccessToken();
+        
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+        };
+        
+        fetch(`/message/api/${props.match.params.id}/getThread`, requestOptions)
+            .then(async response => {
+                let result = await response.json();
+                if( result !== false){
+                    history.push(`/thread/${result}`)
+                    return;    
+                }
+                history.push(`./${job.id}/send`)
+            })
+        
+    }
     
     const deleteJob = async() =>{
         const token = await authService.getAccessToken();
@@ -84,7 +103,7 @@ const JobDetails = (props) => {
                     nieaktualne</Button>]
             }
             if(user !== null){
-                status[1] = <Link to={`./${job.id}/send`} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
+                status[1] = <Link onClick={findThread} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
                             <FontAwesomeIcon className={"mr-1"} icon={faEnvelope}/>Skontaktuj się ze zleceniodawcą
                             </Link>
                 status[2] = <Link className={"w-100 btn text-light"}  onClick={openModal}>

@@ -59,26 +59,36 @@ namespace OddJobs.Controllers
         [Authorize]
         public async Task<IActionResult> GetThreads()
         {
-            var user = await _userManager.GetUserAsync(User).ConfigureAwait(false);;
-            // var messages = await _context.Messages.Where(message => message.Thread.JobOrder.PrincipalId == user.Id
-            //                                                         || message.Thread.InterestedUser.Id == user.Id)
-            //     .OrderBy(message => message.SendTime).GroupBy(x => x.Thread).Select(x => x.FirstOrDefault()).ToListAsync();
-
+            var user = await _userManager.GetUserAsync(User);
+           
             var messages = _context.Messages.Where(message => message.Thread.JobOrder.PrincipalId == user.Id
                                                                     || message.Thread.InterestedUser.Id == user.Id)
-                .Include("Thread").Include("Thread.JobOrder").Include("Thread.InterestedUser").AsEnumerable()
+                .Include("Thread").Include("Thread.JobOrder").Include("Thread.JobOrder.Principal").Include("Thread.InterestedUser").AsEnumerable()
                 .GroupBy(x => x.Thread.Id).Select(x => x.Last());
-            // var query = await _context.Threads.Where(thread =>
-            //         thread.JobOrder.PrincipalId == user.Id || thread.InterestedUser.Id == user.Id)
-            //     .Include(t => t.JobOrder)
-            //     .Join(messages)
-            //
+       
             if (user != null)
             {
                 return Ok(messages);
             }
             
             
+            return Ok(false);
+        }
+
+        [HttpPost("api/{jobId:int}/getThread")]
+        [Authorize]
+        public async Task<IActionResult> GetThread(int jobId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            
+            var thread = await _context.Threads.Where(t => t.JobOrder.ID == jobId && t.InterestedUser.Id == user.Id)
+                .ToListAsync();
+
+            if (thread.Count != 0)
+            {
+                return Ok(thread.First().Id);
+            }
+
             return Ok(false);
         }
     }

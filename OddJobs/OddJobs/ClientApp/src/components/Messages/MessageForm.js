@@ -32,7 +32,7 @@ const MessageForm = (props) => {
             if(response.ok){
                 let thread = await response.json();
                 console.log(thread);
-                history.push( `/messages/${thread.id}`);
+                history.push( `/thread/${thread.id}`);
             }
         });
         

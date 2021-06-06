@@ -10,7 +10,7 @@ const ThreadsList = () => {
     const [user, setUser] = useState({})
     
     const fetchThreads = async () =>{
-        setUser( authService.getUser());
+        setUser( await authService.getUser());
         
         const token = await authService.getAccessToken();
         const requestOptions = {
@@ -35,11 +35,11 @@ const ThreadsList = () => {
                 let messageText = e.messageText;
                 if(messageText.length > 60) messageText = messageText.substring(0,60) + "...";
                 return (
-                    <div>
+                     <Link to={`/thread/${e.thread.id}`} className={"pt-1 pb-1"} style={{textDecoration: "none", color: "white"}}>
                         <strong>{e.thread.jobOrder.title}</strong>
                         <br/>
                         {messageText}
-                    </div>
+                     </Link>
                 )
             }, 
         },
@@ -48,10 +48,14 @@ const ThreadsList = () => {
             selector: 'interestedUser',
             sortable: true,
             cell: (e) => {
-                if(e.thread.interestedUser.id !== user.sub) {
-                    return <>{e.thread.interestedUser.email} ({e.thread.interestedUser.firstName} {e.thread.interestedUser.lastName})</>
+                if(user) {
+                    console.log(user);
+
+                    if (e.thread.interestedUser.id !== user.sub) {
+                        return <>{e.thread.interestedUser.email} ({e.thread.interestedUser.firstName} {e.thread.interestedUser.lastName})</>
+                    }
+                    return <>{e.thread.jobOrder.principal.email} ({e.thread.jobOrder.principal.firstName} {e.thread.jobOrder.principal.lastName})</>
                 }
-                return <>{e.thread.jobOrder.principal.email} ({e.thread.jobOrder.principal.firstName} {e.thread.jobOrder.principal.lastName})</>
             }
         },
         {
