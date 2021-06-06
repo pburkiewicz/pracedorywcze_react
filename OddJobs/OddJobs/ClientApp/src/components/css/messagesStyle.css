@@ -1,0 +1,19 @@
+﻿
+.messages {
+    list-style-type: none;
+}
+
+.receive{
+    float: left;
+    clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 10px), 10px calc(100% - 10px), 5px 100%, 30px calc(100% - 10px), 0% calc(100% - 10px));
+    background: #393e46;
+    border-radius: 5px;
+}
+
+.send{
+    float: right;
+    /*inset: 10 0 20 0 ;*/
+    clip-path: polygon(0% 0%, 100% 0%, 100%  calc(100% - 10px), calc(100% - 10px) calc(100% - 10px),  calc(100% - 5px) 100%,  calc(100% - 30px) calc(100% - 10px), 0% calc(100% - 10px));
+    background: #4aba70;
+    border-radius: 5px;
+}

@@ -25,15 +25,24 @@ namespace OddJobs.Controllers
             UserManager<ApplicationUser> userManager) => (_context, _logger, _userManager) = (context, logger, userManager);
 
 
-        [HttpGet("api/{threadId:Guid}")]
+        [HttpGet("api/{threadId:Guid}/messages")]
         [Authorize]
         public async Task<IActionResult> GetMessages(Guid threadId)
         {
-            var query = await _context.Messages.Where(message => message.Thread.Id == threadId)
-                .Include(m => m.Thread)
-                .Include(m => m.Sender).ToListAsync();
+            var query = await _context.Messages.Where(m => m.Thread.Id == threadId)
+                .Include(m=>m.Sender).OrderByDescending(m=> m.SendTime).ToListAsync();
             return Ok(query);
         }
+        
+        [HttpGet("api/{threadId:Guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetThread(Guid threadId)
+        {
+            var query = await _context.Threads.Where(t => t.Id == threadId)
+                .Include(t => t.JobOrder).ToListAsync();
+            return Ok(query.First());
+        }
+        
         
         [HttpPost("api/{threadId:Guid}")]
         [Authorize]
@@ -77,7 +86,7 @@ namespace OddJobs.Controllers
 
         [HttpPost("api/{jobId:int}/getThread")]
         [Authorize]
-        public async Task<IActionResult> GetThread(int jobId)
+        public async Task<IActionResult> GetThreadFromJobId(int jobId)
         {
             var user = await _userManager.GetUserAsync(User);
             
