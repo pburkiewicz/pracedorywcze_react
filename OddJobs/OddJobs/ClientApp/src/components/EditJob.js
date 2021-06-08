@@ -159,7 +159,7 @@ const EditJobForm = (props) => {
             </Row>
         )
     }
-    return <LoadingCard />
+    return <LoadingCard text={"zlecenie"}/>
 };
 export default EditJobForm;
 

@@ -29,8 +29,20 @@ namespace OddJobs.Controllers
         [Authorize]
         public async Task<IActionResult> GetMessages(Guid threadId)
         {
+            var threads = await _context.Threads.Where(t => t.Id == threadId)
+                .Include(t => t.JobOrder).ToListAsync();
+            
+            if (threads.Count == 0) return NotFound();
+            
+            var thread = threads.First();
+ 
+            var user = await _userManager.GetUserAsync(User);
+            
+            if (!(user.Id != thread.InterestedUser.Id || user.Id != thread.JobOrder.PrincipalId)) return Unauthorized();
+
             var query = await _context.Messages.Where(m => m.Thread.Id == threadId)
                 .Include(m=>m.Sender).OrderByDescending(m=> m.SendTime).ToListAsync();
+            
             return Ok(query);
         }
         
@@ -38,19 +50,36 @@ namespace OddJobs.Controllers
         [Authorize]
         public async Task<IActionResult> GetThread(Guid threadId)
         {
+            var user = await _userManager.GetUserAsync(User);
+            
             var query = await _context.Threads.Where(t => t.Id == threadId).Include(t=> t.InterestedUser)
                 .Include(t => t.JobOrder).ThenInclude(t=> t.Principal).ToListAsync();
-            return Ok(query.First());
+
+            if (query.Count == 0) return NotFound();
+            
+            var thread = query.First();
+
+            if (!(user.Id != thread.InterestedUser.Id || user.Id != thread.JobOrder.PrincipalId)) return Unauthorized();
+            
+            return Ok(thread);
         }
         
         
         [HttpPost("api/{threadId:Guid}")]
         [Authorize]
-        public async Task<IActionResult> SendFirstMessage(Guid threadId, [FromBody] BasicMessage message)
+        public async Task<IActionResult> SendMessage(Guid threadId, [FromBody] BasicMessage message)
         {
-            var thread = await _context.Threads.FindAsync(threadId);
-            var user = await _userManager.FindByIdAsync(message.User);
-
+            var threads = await _context.Threads.Where(t => t.Id == threadId)
+                .Include(t => t.JobOrder).ToListAsync();
+            
+            if (threads.Count == 0) return NotFound();
+            
+            var thread = threads.First();
+ 
+            var user = await _userManager.GetUserAsync(User);
+            
+            if (!(user.Id != thread.InterestedUser.Id || user.Id != thread.JobOrder.PrincipalId)) return Unauthorized();
+            
             var mes = new Message {
                 MessageText = message.MessageText,
                 Thread = thread,

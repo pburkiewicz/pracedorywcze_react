@@ -1,14 +1,57 @@
 ﻿import React, {useState, useEffect} from "react";
-import DataTable from 'react-data-table-component';
+import DataTable, { createTheme }  from 'react-data-table-component';
 import authService from "../api-authorization/AuthorizeService";
 import {Col, Row} from "reactstrap";
 import {Link, useHistory} from "react-router-dom";
+import Loading from "../Loading";
 
 const ThreadsList = () => {
     const history = useHistory()
     const [threads, setThreads] = useState([]);
     const [user, setUser] = useState({})
-    
+
+    createTheme('solarized', {
+        text: {
+            primary: '#e8e8e8',
+            secondary: '#9c9c9c',
+        },
+        background: {
+            default: '#393e46',
+        },
+        context: {
+            text: '#FFFFFF',
+        },
+        divider: {
+            default: 'rgba(0, 0, 0, 0.3)',
+        },
+        highlightOnHover: {
+            default: 'rgb(69,76,85)',
+            text: 'rgba(255,255,255,0.87)',
+        },
+      
+    });
+
+    const customStyles = {
+        rows: {
+            style: {
+                minHeight: '72px', 
+            }
+        },
+        headCells: {
+            style: {
+                paddingLeft: '8px', 
+                paddingRight: '8px',
+            },
+        },
+        cells: {
+            style: {
+                paddingLeft: '8px',
+                paddingRight: '8px',
+            },
+        },
+    };
+
+
     const fetchThreads = async () =>{
         setUser( await authService.getUser());
         
@@ -23,6 +66,8 @@ const ThreadsList = () => {
                 let result = await response.json();
                 setThreads(result);
         })
+        console.log(document.getElementsByClassName("sc-fnVZcZ fjcLNf rdt_TableHeader"));
+        document.getElementsByClassName("sc-fnVZcZ fjcLNf rdt_TableHeader").item(0).remove();
     }
     
     useEffect(async () => await fetchThreads(), []);
@@ -49,12 +94,10 @@ const ThreadsList = () => {
             sortable: true,
             cell: (e) => {
                 if(user) {
-                    console.log(user);
-
                     if (e.thread.interestedUser.id !== user.sub) {
-                        return <>{e.thread.interestedUser.email} ({e.thread.interestedUser.firstName} {e.thread.interestedUser.lastName})</>
+                        return `${e.thread.interestedUser.email} (${e.thread.interestedUser.firstName} ${e.thread.interestedUser.lastName})`
                     }
-                    return <>{e.thread.jobOrder.principal.email} ({e.thread.jobOrder.principal.firstName} {e.thread.jobOrder.principal.lastName})</>
+                    return `${e.thread.jobOrder.principal.email} (${e.thread.jobOrder.principal.firstName} ${e.thread.jobOrder.principal.lastName})`
                 }
             }
         },
@@ -69,17 +112,27 @@ const ThreadsList = () => {
         },
     ]
     
-    return (
-        <Row style={{marginLeft: "0px"}} className={"w-100 mt-3  d-flex align-items-center"}>
-            <Col md={11} className={"mx-auto"}>
-            <DataTable columns={columns} data={threads} 
-                       highlightOnHover
-                       pagination
-                       onRowClicked={(e) => history.push(`/thread/${e.thread.id}`)}
-                       theme = "dark"/>
-            </Col>
-        </Row>
-    )
+    
+    if( threads.length){
+        return (
+            <Row style={{marginLeft: "0px"}} className={"w-100 mt-3  d-flex align-items-center"}>
+                <Col xs={11} className={"mx-auto"} style={{backgroundColor: "#393e46"}}>
+                    <h4 className={"text-light mt-3 ml-2"}>Wiadomości</h4>
+                    
+                    <DataTable columns={columns} data={threads}
+                                                       highlightOnHover
+                                                       pagination
+                                                       theme="solarized"
+                                                       progressComponent={<Loading/>}
+                                                       progressPending={false}
+                                                       customStyles={customStyles}
+                                                       onRowClicked={(e) => history.push(`/thread/${e.thread.id}`)}/>
+                </Col>
+            </Row>
+        )
+    }
+    return <Loading text={"wiadomości"}/>
+  
     
 }
 export default ThreadsList;

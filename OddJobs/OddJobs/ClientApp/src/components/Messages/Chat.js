@@ -33,6 +33,7 @@ const Chat = (props) => {
         await fetch(`message/api/${props.match.params.id}`, requestOptions)
             .then(async response => {
                 let result = await response.json();
+                console.log(result)
                 if(user.sub == result.jobOrder.principalId){
                     setFriend(result.interestedUser);
                 }else{

@@ -141,7 +141,7 @@ const JobDetails = (props) => {
 
     if(error == null) {
         if (Object.keys(job).length === 0) {
-            return <LoadingCard />
+            return <LoadingCard text={"zlecenie"}/>
         }
     }
     if (error != null) {

@@ -205,7 +205,7 @@ namespace OddJobs.Controllers
         {
             var jobOrder = await _context.JobOrders.FindAsync(jobId);
             var user = await _userManager.FindByIdAsync(message.User);
-
+            
             var thread = new Thread {
                 JobOrder = jobOrder,
                 InterestedUser = user,
