@@ -4,18 +4,19 @@ import authService from "../api-authorization/AuthorizeService";
 import '../css/formStyle.css'
 import {Link, useHistory} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBriefcase} from "@fortawesome/free-solid-svg-icons";
-
+import {faBriefcase, faUserCircle,faAt} from "@fortawesome/free-solid-svg-icons";
 
 import '../css/messagesStyle.css';
 import '../css/formStyle.css';
+
 const Chat = (props) => {
     const [textMessage, setTextMessage] = useState("");
     const [updateMessages, setUpdateMessages] = useState(true)
     const [messages, setMessages] = useState([]);
     const [thread, setThread] = useState({});
     const [user, setUser] = useState({});
-    
+    const [friend, setFriend] = useState({})
+
     const fetchMessages = async () => {
         const token = await authService.getAccessToken();
         const requestOptions = {
@@ -32,13 +33,18 @@ const Chat = (props) => {
         await fetch(`message/api/${props.match.params.id}`, requestOptions)
             .then(async response => {
                 let result = await response.json();
+                if(user.sub == result.jobOrder.principalId){
+                    setFriend(result.interestedUser);
+                }else{
+                    setFriend(result.jobOrder.principal);
+                }
                 setThread(result);
             })
     }
 
     useEffect( async () => {
-        await fetchMessages();
         setUser(await authService.getUser());
+        await fetchMessages();
     }, [updateMessages])
     
     const sendMessage = async (event) => {
@@ -67,7 +73,7 @@ const Chat = (props) => {
     
     let status = [];
     if(Object.keys(thread).length !== 0){
-        status = [ <Link to={`/jobOrder/${thread.jobOrder.id}`} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}>
+        status = [ <Link to={`/jobOrder/${thread.jobOrder.id}`} className={"w-100 btn text-light"} style={{borderTopColor: "#6c757d", paddingBottom: "9px"}}>
                                     <FontAwesomeIcon className={"mr-1"} icon={faBriefcase}/>Zlecenie</Link>];      
     }
     
@@ -75,22 +81,22 @@ const Chat = (props) => {
     if(messages && messages.length){
         oldDate = new Date(messages[0].sendTime).toLocaleDateString();    
     }
+
     
     return (
         <Row className="d-flex justify-content-center w-100 mt-3 text-light job-details">
             <Col md={7} className={" p-3 job-card"}>
-                {/*<small><b>Dodane: </b>{job.registeredTime}</small>*/}
-                {/*<h3 className={"pt-2"}>{job.title}</h3>*/}
-                <hr className={"bg-secondary mb-1 mt-1"}/>
-                <Row className={"pt-2 pb-1"}>
-                    <div className={"ml-3 mr-3 w-100 pl-0 pr-0 rounded overflow-auto"} style={{backgroundColor: "#222831", minHeight: "100px", maxHeight: "500px"}}>
+                <Row className={"pt-0 pb-1"}>
+                    <div className={"ml-3 mr-3 w-100 pl-0 pr-0 rounded overflow-auto message-box"} style={{backgroundColor: "#222831", minHeight: "300px", maxHeight: "500px"}}>
                         {
                             messages && messages.length && messages.map((item, index) => {
                                 let messageClass = "receive";
                                 let flex = "flex-row"
+                                let float = "float-left"
                                 if(user.sub === item.sender.id){
                                     messageClass = "send";
                                     flex = "flex-row-reverse"
+                                    float = "float-right"
                                 }
                                 let time = new Date(item.sendTime).toLocaleTimeString().slice(0, 5);
                                 let date = new Date(item.sendTime).toLocaleDateString();
@@ -98,11 +104,13 @@ const Chat = (props) => {
                                     return <div className={"d-flex pl-3 pr-3 mt-2 mb-2 " + flex}>
                                         <div><small className={"text-secondary"}>{time}</small>
                                             <div className={"d-flex  " + flex}>
-                                                
-                                                {/*<small>{item.sendTime}</small>*/}
-                                                <div className={messageClass + " p-1"}>
-                                                    {/*<p className={"mb-0"} style={{fontSize: "10px"}}>{item.sender.firstName}: </p>*/}
-                                                    <p className={""}>{item.messageText}</p>
+                                                <div>
+                                                    <Row className={"m-0 p-0"}>
+                                                        <p className={messageClass + " pr-3 pl-3 pt-2 pb-2 mb-0"}>{item.messageText}</p>
+                                                    </Row>
+                                                    <Row className={"m-0 p-0 " + float }>
+                                                        <span className={messageClass +"  triangle"}></span>
+                                                    </Row>
                                                 </div>
                                             </div>
                                         </div>
@@ -112,9 +120,13 @@ const Chat = (props) => {
                                     return <><div className={"d-flex pl-3 pr-3 mt-2 mb-2 justify-content-center"}><small className={"mx-auto text-secondary"}>{date}</small></div><div className={"d-flex pl-3 pr-3 mt-2 mb-2 " + flex}>
                                         <div><small className={"text-secondary"}>{time}</small>
                                             <div className={"d-flex  " + flex}>
-
-                                                <div className={messageClass + " p-1"}>
-                                                    <p className={""}>{item.messageText}</p>
+                                                <div>
+                                                    <Row className={"m-0 p-0"}>
+                                                        <p className={messageClass + " pr-3 pl-3 pt-2 pb-2 mb-0"}>{item.messageText}</p>
+                                                    </Row>
+                                                    <Row className={"m-0 p-0 " + float }>
+                                                        <span className={messageClass +"  triangle"}></span>
+                                                    </Row>
                                                 </div>
                                             </div>
                                         </div>
@@ -124,7 +136,7 @@ const Chat = (props) => {
                         }
                     </div>
                 </Row>
-                <hr className={"bg-secondary mb-1 mt-1"}/>
+                <hr className={"bg-secondary mb-2 mt-1"}/>
                 <Row>
                     <Col sm={10} className={""}>
                         <Input value={textMessage} type="textarea" style={{resize: "none"}} onChange={(e) => setTextMessage(e.target.value)}
@@ -136,7 +148,16 @@ const Chat = (props) => {
                 </Row>
             </Col>
             <Col md={3} className={"ml-3"}>
-                <Row className={"bg-dark mb-3"}>
+                <Row className={"bg-dark mb-3 "}>
+                    <Col xs={12} className={"d-flex justify-content-center"}>
+                        <FontAwesomeIcon icon={faUserCircle} size={"6x"} className={"mx-auto mt-3"} color={"#4aba70"}/>    
+                    </Col>
+                    <Col xs={12} className={"d-flex justify-content-center"}>
+                        <p className={"mx-auto mb-2 mt-2"}>{friend.firstName} {friend.lastName}</p>
+                    </Col>
+                    <Col xs={12} className={"d-flex justify-content-center"}>
+                        <span className={"mx-auto mb-3 mt-1"}><FontAwesomeIcon icon={faAt} color={"#4aba70"} className={"mr-2"}/>{friend.email}</span>
+                    </Col>
                     {status}
                 </Row>
             </Col>

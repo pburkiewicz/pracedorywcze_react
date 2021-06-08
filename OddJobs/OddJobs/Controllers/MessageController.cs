@@ -38,8 +38,8 @@ namespace OddJobs.Controllers
         [Authorize]
         public async Task<IActionResult> GetThread(Guid threadId)
         {
-            var query = await _context.Threads.Where(t => t.Id == threadId)
-                .Include(t => t.JobOrder).ToListAsync();
+            var query = await _context.Threads.Where(t => t.Id == threadId).Include(t=> t.InterestedUser)
+                .Include(t => t.JobOrder).ThenInclude(t=> t.Principal).ToListAsync();
             return Ok(query.First());
         }
         

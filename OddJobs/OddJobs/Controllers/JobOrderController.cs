@@ -83,7 +83,8 @@ namespace OddJobs.Controllers
         [HttpGet("api/{id:int}")]
         public async Task<IActionResult> GetJob(int id)
         {
-            var job = await _context.JobOrders.Where(j => j.ID == id).Include(j => j.Worker).ToListAsync();
+            var job = await _context.JobOrders.Where(j => j.ID == id).Include(j => j.Worker)
+                .Include(j=> j.Principal).ToListAsync();
             if (job != null) return Ok(job.First());
             return NotFound();
         }
