@@ -32,11 +32,9 @@ const JobDetails = (props) => {
     const [reportModal, setReportModal] = useState(false);
     const [assignWorkerModal, setAssignWorkerModal] = useState(false);
     
-    const [fetchData, setFetchData] = useState(true);
-    
     const [modal, setModal] = useState(false);
     const [roles, setRoles] = useState(0);
-    const [rerender,setRerender] = useState(0);
+    const [rerender,setRerender] = useState(true);
    
     useEffect( () => {
         (async () => {
@@ -52,7 +50,7 @@ const JobDetails = (props) => {
                     order.startDate = new Date(order.startDate).toLocaleDateString();
                     order.registeredTime = new Date(order.registeredTime).toLocaleString();
                     setJob(order);
-                    setFetchData(false);
+                    setRerender(false);
                 }
             });
         identity();
@@ -65,8 +63,7 @@ const JobDetails = (props) => {
         const token = await authService.getAccessToken()
         setRoles( await ((await fetch("jobOrder/fetchHighStatus/", {headers: !token ? {} : {'Authorization': `Bearer ${token}`}})).json()));
     }
-    }, [fetchData])
-    
+
     const findThread = async () => {
         const token = await authService.getAccessToken();
         
@@ -106,7 +103,7 @@ const JobDetails = (props) => {
             headers: !token ? {} : {'Authorization': `Bearer ${token}`}
         });
         if (status === 0 )history.push("/list")
-        else setRerender(rerender+1);
+        else setRerender(true);
     }
     
     const makeDecisionButton = ()=>{
@@ -120,7 +117,6 @@ const JobDetails = (props) => {
         </div>;
     }
     
-    const openModal = () => setModal(!modal);
     const openReportModal = () => setReportModal(!reportModal);
 
     const openAssignWorkerModal = () => setAssignWorkerModal(!assignWorkerModal);
@@ -133,8 +129,7 @@ const JobDetails = (props) => {
             headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
         }).then(response => {
             if(response.ok){
-                console.log("Zmieniono");
-                setFetchData(true);
+                setRerender(true);
             }
         })
     }
@@ -158,7 +153,7 @@ const JobDetails = (props) => {
             status.push(<Link className={"w-100 btn text-light"}  onClick={deleteJob}>
                         <FontAwesomeIcon className={"mr-1"} icon={faTrash}/>Usuń zlecenie
                        </Link>)
-            status.push(<AssignWorkerPopup modal={assignWorkerModal} setModal={setAssignWorkerModal} setRefresh={setFetchData} jobId={job.id} user={user}/>)
+            status.push(<AssignWorkerPopup modal={assignWorkerModal} setModal={setAssignWorkerModal} setRefresh={setRerender} jobId={job.id} user={user}/>)
 
         }else{
             if (!job.active) {
@@ -172,7 +167,6 @@ const JobDetails = (props) => {
                 switch (job.reported) {
                     case 0 :status[2] = <button className={"w-100 btn text-light"} onClick={openReportModal}>
                             <FontAwesomeIcon className={"mr-1"} icon={faBan}/>Zgłoś</button>
-                        status[3] = <ReportJobPopup modal={modal} setModal={setModal} id={job.id} user={user} setRerender={setRerender} rerender={rerender}/>
                         break;
                     case 1 : status[2] = <p className={"w-100 p-2 mb-0 text-center  custom-button-red text-light"}>
                         <FontAwesomeIcon className={"mr-1"} icon={faExclamationTriangle}/>Oferta została zgłoszona</p>
@@ -181,7 +175,7 @@ const JobDetails = (props) => {
                     case 2 : status[2] = <p className={"w-100 p-2 mb-0 text-center custom-button-green text-light"}>
                         <FontAwesomeIcon className={"mr-1"} icon={faCheckCircle}/>Oferta autoryzowana przez administrację</p>
                 }
-                status[3] = <ReportJobPopup modal={reportModal} setModal={setReportModal} id={job.id} user={user}/>
+                status[3] = <ReportJobPopup modal={reportModal} setModal={setReportModal} id={job.id} user={user} setRerender={setRerender}/>
             }
         }
     }

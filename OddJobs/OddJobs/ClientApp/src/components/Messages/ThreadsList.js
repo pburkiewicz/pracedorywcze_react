@@ -6,11 +6,11 @@ import {Link, useHistory} from "react-router-dom";
 import Loading from "../Loading";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faTimesCircle, faEnvelopeSquare} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faTimesCircle, faEnvelopeSquare, faHeartBroken} from "@fortawesome/free-solid-svg-icons";
 
 const ThreadsList = () => {
     const history = useHistory()
-    const [threads, setThreads] = useState([]);
+    const [threads, setThreads] = useState(null);
     const [user, setUser] = useState({})
 
     createTheme('solarized', {
@@ -77,14 +77,11 @@ const ThreadsList = () => {
         await fetch('message/api/getThreads', requestOptions)
             .then(async response => {
                 let result = await response.json();
-                console.log(result);
                 setThreads(result);
         })
-        document.getElementsByClassName("sc-fnVZcZ fjcLNf rdt_TableHeader").item(0).remove();
-        let list = document.getElementsByClassName("sc-crzoAE iOlZKJ rdt_TableCol_Sortable");
-        for( let item of list){
-            item.classList.add("h6")
-        }
+        let header = document.getElementsByClassName("sc-fnVZcZ fjcLNf rdt_TableHeader")
+        if( header.length !== 0) header.item(0).remove()
+
     }
     
     useEffect(async () => await fetchThreads(), []);
@@ -156,7 +153,7 @@ const ThreadsList = () => {
         },
     ]
     
-    
+    if(threads == null ) return <Loading text={"wiadomości"}/>
     if( threads.length){
         return (
             <Row style={{marginLeft: "0px"}} className={"w-100 mt-3  d-flex align-items-center"}>
@@ -178,7 +175,22 @@ const ThreadsList = () => {
             </Row>
         )
     }
-    return <Loading text={"wiadomości"}/>
+    return (
+        <div className="w-100 mt-3 d-flex align-items-center">
+            <div className="alert alert-danger w-50 mx-auto bg-dark" role="alert">  
+                <Row>
+                    <Col sm={2} className={"d-flex align-items-center"}>
+                        <FontAwesomeIcon icon={faHeartBroken} size={"5x"} className="mx-auto"
+                                         style={{verticalAlign: "middle"}} color={"#d9534f"}/>
+                    </Col>
+                    <Col sm={10}>
+                        <h4 className="alert-heading text-light">Bardzo nam przykro</h4>
+                        <p className={"text-light mb-0"}>Nie znaleźliśmy żadnych wiadomości. </p>
+                    </Col>
+                </Row>
+            </div>
+        </div>
+    )
   
     
 }

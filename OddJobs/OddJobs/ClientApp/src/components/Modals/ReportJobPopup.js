@@ -1,8 +1,8 @@
 ﻿import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import authService from "./api-authorization/AuthorizeService";
+import authService from "../api-authorization/AuthorizeService";
 
-const ReportJobPopup = ({setModal, modal, id, user, setRerender, rerender}) => {
+const ReportJobPopup = ({setModal, modal, id, user, setRerender}) => {
   
     // const [modal, setModal] = useState(false);
 
@@ -20,7 +20,7 @@ const ReportJobPopup = ({setModal, modal, id, user, setRerender, rerender}) => {
                 console.log("zgłoszono");
             }
             setModal(false);
-            setRerender(rerender+1);
+            setRerender(true);
         })
     }
     

@@ -66,15 +66,15 @@
     line-height: normal;
 }
 
-.btn .custom-button-green:hover, .btn:focus .custom-button-green {
+.btn.custom-button-green:hover, .btn:focus.custom-button-green {
     background: #339757 !important;
     color: #f8f9fa;
 }
 
-.custom-button-green:hover{
-    background: #339757 !important;
-    color: #f8f9fa;
-}
+/*.custom-button-green:hover{*/
+/*    background: #339757 !important;*/
+/*    color: #f8f9fa;*/
+/*}*/
 /*.login-register-form .checkbox-inline {*/
 /*    float: left;*/
 /*}*/

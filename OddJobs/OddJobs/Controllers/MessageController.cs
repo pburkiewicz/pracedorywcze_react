@@ -30,7 +30,7 @@ namespace OddJobs.Controllers
         public async Task<IActionResult> GetMessages(Guid threadId)
         {
             var threads = await _context.Threads.Where(t => t.Id == threadId)
-                .Include(t => t.JobOrder).ToListAsync();
+                .Include(t => t.JobOrder).Include(t=>t.InterestedUser).ToListAsync();
             
             if (threads.Count == 0) return NotFound();
             
@@ -71,7 +71,7 @@ namespace OddJobs.Controllers
         {
             if (message.MessageText.Length == 0) return BadRequest();
             var threads = await _context.Threads.Where(t => t.Id == threadId)
-                .Include(t => t.JobOrder).ToListAsync();
+                .Include(t => t.JobOrder).Include(t=>t.InterestedUser).ToListAsync();
             
             if (threads.Count == 0) return NotFound();
             
@@ -106,13 +106,7 @@ namespace OddJobs.Controllers
                 .GroupBy(x => x.Thread.Id).Select(x => x.Last())
                 .Select(m => new {message=m, correspondent= user.Id == m.Thread.InterestedUser.Id ? m.Thread.JobOrder.Principal : m.Thread.InterestedUser});
        
-           if (user != null)
-            {
-                return Ok(messages);
-            }
-            
-            
-            return Ok(false);
+           return user != null ? Ok(messages) : Ok(false);
         }
 
         [HttpPost("api/{jobId:int}/getThread")]
@@ -124,12 +118,7 @@ namespace OddJobs.Controllers
             var thread = await _context.Threads.Where(t => t.JobOrder.ID == jobId && t.InterestedUser.Id == user.Id)
                 .ToListAsync();
 
-            if (thread.Count != 0)
-            {
-                return Ok(thread.First().Id);
-            }
-
-            return Ok(false);
+            return thread.Count != 0 ? Ok(thread.First().Id) : Ok(false);
         }
 
         [HttpGet("api/{jobId:int}/getInterestedUsers")]
