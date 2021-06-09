@@ -69,6 +69,7 @@ namespace OddJobs.Controllers
         [Authorize]
         public async Task<IActionResult> SendMessage(Guid threadId, [FromBody] BasicMessage message)
         {
+            if (message.MessageText.Length == 0) return BadRequest();
             var threads = await _context.Threads.Where(t => t.Id == threadId)
                 .Include(t => t.JobOrder).ToListAsync();
             
@@ -79,7 +80,6 @@ namespace OddJobs.Controllers
             var user = await _userManager.GetUserAsync(User);
             
             if (!(user.Id != thread.InterestedUser.Id || user.Id != thread.JobOrder.PrincipalId)) return Unauthorized();
-            
             var mes = new Message {
                 MessageText = message.MessageText,
                 Thread = thread,
@@ -101,10 +101,12 @@ namespace OddJobs.Controllers
            
             var messages = _context.Messages.Where(message => message.Thread.JobOrder.PrincipalId == user.Id
                                                                     || message.Thread.InterestedUser.Id == user.Id)
-                .Include("Thread").Include("Thread.JobOrder").Include("Thread.JobOrder.Principal").Include("Thread.InterestedUser").AsEnumerable()
-                .GroupBy(x => x.Thread.Id).Select(x => x.Last());
+                .Include("Thread").Include("Thread.JobOrder").Include("Thread.JobOrder.Principal").Include("Thread.InterestedUser")
+                .AsEnumerable()
+                .GroupBy(x => x.Thread.Id).Select(x => x.Last())
+                .Select(m => new {message=m, correspondent= user.Id == m.Thread.InterestedUser.Id ? m.Thread.JobOrder.Principal : m.Thread.InterestedUser});
        
-            if (user != null)
+           if (user != null)
             {
                 return Ok(messages);
             }

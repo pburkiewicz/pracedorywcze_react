@@ -203,6 +203,7 @@ namespace OddJobs.Controllers
         [Authorize]
         public async Task<IActionResult> SendFirstMessage(int jobId, [FromBody] BasicMessage message)
         {
+            if (message.MessageText.Length == 0) return BadRequest();
             var jobOrder = await _context.JobOrders.FindAsync(jobId);
             var user = await _userManager.FindByIdAsync(message.User);
             

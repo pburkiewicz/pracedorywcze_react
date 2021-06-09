@@ -5,6 +5,9 @@ import {Col, Row} from "reactstrap";
 import {Link, useHistory} from "react-router-dom";
 import Loading from "../Loading";
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCheckCircle, faTimesCircle, faEnvelopeSquare} from "@fortawesome/free-solid-svg-icons";
+
 const ThreadsList = () => {
     const history = useHistory()
     const [threads, setThreads] = useState([]);
@@ -28,19 +31,28 @@ const ThreadsList = () => {
             default: 'rgb(69,76,85)',
             text: 'rgba(255,255,255,0.87)',
         },
-      
+        sortFocus: {
+            default: 'rgba(255, 255, 255, .54)',
+        },
     });
 
     const customStyles = {
         rows: {
             style: {
                 minHeight: '72px', 
+                '&:hover':{
+                    cursor: 'pointer',
+                }
             }
         },
         headCells: {
             style: {
                 paddingLeft: '8px', 
                 paddingRight: '8px',
+                fontSize: '1em',
+                '&:hover': {
+                    color: "rgb(163,161,161)"
+                }
             },
         },
         cells: {
@@ -49,6 +61,7 @@ const ThreadsList = () => {
                 paddingRight: '8px',
             },
         },
+    
     };
 
 
@@ -64,24 +77,29 @@ const ThreadsList = () => {
         await fetch('message/api/getThreads', requestOptions)
             .then(async response => {
                 let result = await response.json();
+                console.log(result);
                 setThreads(result);
         })
-        console.log(document.getElementsByClassName("sc-fnVZcZ fjcLNf rdt_TableHeader"));
         document.getElementsByClassName("sc-fnVZcZ fjcLNf rdt_TableHeader").item(0).remove();
+        let list = document.getElementsByClassName("sc-crzoAE iOlZKJ rdt_TableCol_Sortable");
+        for( let item of list){
+            item.classList.add("h6")
+        }
     }
     
     useEffect(async () => await fetchThreads(), []);
     
     const columns = [ {
             name: 'Wiadomość',
-            selector: 'messageText',
+            selector: 'message.messageText',
             sortable: true,
+            width: "50%",
             cell: (e) =>{
-                let messageText = e.messageText;
-                if(messageText.length > 60) messageText = messageText.substring(0,60) + "...";
+                let messageText = e.message.messageText;
+                if(messageText.length > 60) messageText = messageText.slice(0,60) + "...";
                 return (
-                     <Link to={`/thread/${e.thread.id}`} className={"pt-1 pb-1"} style={{textDecoration: "none", color: "white"}}>
-                        <strong>{e.thread.jobOrder.title}</strong>
+                     <Link to={`/thread/${e.message.thread.id}`} className={"pt-1 pb-1"} style={{textDecoration: "none", color: "white"}}>
+                        <strong>{e.message.thread.jobOrder.title.length > 60 ? e.message.thread.jobOrder.title.slice(0,60)+"..." : e.message.thread.jobOrder.title}</strong>
                         <br/>
                         {messageText}
                      </Link>
@@ -90,24 +108,50 @@ const ThreadsList = () => {
         },
         {
             name: 'Użytkownik',
-            selector: 'interestedUser',
+            selector: 'correspondent.email',
             sortable: true,
             cell: (e) => {
-                if(user) {
-                    if (e.thread.interestedUser.id !== user.sub) {
-                        return `${e.thread.interestedUser.email} (${e.thread.interestedUser.firstName} ${e.thread.interestedUser.lastName})`
-                    }
-                    return `${e.thread.jobOrder.principal.email} (${e.thread.jobOrder.principal.firstName} ${e.thread.jobOrder.principal.lastName})`
+                return `${e.correspondent.firstName} ${e.correspondent.lastName}`
+            }
+        },
+        {
+            name: 'Rodzaj',
+            selector: (e) => {return user.sub == e.message.thread.jobOrder.principalId},
+            sortable: true,
+            cell: (e) => {
+                if(user.sub == e.message.thread.jobOrder.principalId) {
+                    return "Twoja oferta"
+                }else{
+                    return "Zlecone"
                 }
             }
         },
         {
-            name: 'Data ostatniej wiadomości',
-            selector: 'sendTime',
+            name: 'Status',
+            selector: 'message.thread.jobOrder.active',
+            sortable: true,
+            center: true,
+            cell: (e) => {
+                if(e.message.thread.jobOrder.active) {
+                    return <FontAwesomeIcon icon={faCheckCircle} size={"2x"} color={"#4aba70"}/>
+                }else{
+                    return <FontAwesomeIcon icon={faTimesCircle} size={"2x"} color={"#d9534f"}/>
+                }
+            }
+        },
+        {
+            name: '',
+            selector: 'message.sendTime',
+            right: true,
             sortable: true,
             cell: (e) => {
-                let lastMessageTime = new Date(e.sendTime);
-                return <> {lastMessageTime.toLocaleTimeString()} {lastMessageTime.toLocaleDateString()}</>
+                let lastMessageTime = new Date(e.message.sendTime);
+                let now = new Date();
+                if(lastMessageTime.getDate() != now.getDate()){
+                    return lastMessageTime.toLocaleTimeString().slice(0,5);
+                }else{
+                    return `${lastMessageTime.getDay()} ${lastMessageTime.toLocaleString("pl",{month: "long"}).slice(0,3)}`
+                }
             }
         },
     ]
@@ -117,7 +161,10 @@ const ThreadsList = () => {
         return (
             <Row style={{marginLeft: "0px"}} className={"w-100 mt-3  d-flex align-items-center"}>
                 <Col xs={11} className={"mx-auto"} style={{backgroundColor: "#393e46"}}>
-                    <h4 className={"text-light mt-3 ml-2"}>Wiadomości</h4>
+                    <span className={"text-light h2 mt-3 ml-2 d-flex align-items-center"}>
+                        <FontAwesomeIcon icon={faEnvelopeSquare} size={"2x"} color={"#4aba70"} className={"mr-2"}/>
+                        Wiadomości
+                    </span>
                     
                     <DataTable columns={columns} data={threads}
                                                        highlightOnHover
@@ -126,7 +173,7 @@ const ThreadsList = () => {
                                                        progressComponent={<Loading/>}
                                                        progressPending={false}
                                                        customStyles={customStyles}
-                                                       onRowClicked={(e) => history.push(`/thread/${e.thread.id}`)}/>
+                                                       onRowClicked={(e) => history.push(`/thread/${e.message.thread.id}`)}/>
                 </Col>
             </Row>
         )

@@ -80,7 +80,7 @@ const MessageForm = (props) => {
                                name="message" id="message" placeholder="Wiadomość..." rows={3} />
                     </Col>
                     <Col sm={2} className={"pl-0"}>
-                        <Input type={"submit"} className={"btn custom-button-green"}  value={"Wyślij"} onClick={sendMessage}/>
+                        <Input type={"submit"} disabled={!textMessage.length} className={"btn custom-button-green"} value={"Wyślij"} onClick={sendMessage}/>
                     </Col>
                 </Row>
             </Col>
