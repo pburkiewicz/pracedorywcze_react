@@ -81,8 +81,9 @@ namespace OddJobs.Controllers
         [HttpGet("api/{id:int}")]
         public async Task<IActionResult> GetJob(int id)
         {
-            var job = await _context.JobOrders.FindAsync(id);
-            if (job != null) return Ok(job);
+            var job = await _context.JobOrders.Where(j => j.ID == id).Include(j => j.Worker)
+                .Include(j=> j.Principal).ToListAsync();
+            if (job != null) return Ok(job.First());
             return NotFound();
         }
         
@@ -113,6 +114,47 @@ namespace OddJobs.Controllers
             var job = await _context.JobOrders.FindAsync(id);
             if (job == null) return NotFound();
             job.Reported = 1;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+        
+        [HttpPut("status/{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> ChangeStatus(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var job = await _context.JobOrders.FindAsync(id);
+            
+            if (job == null) return NotFound();
+            if(user.Id != job.PrincipalId) return Unauthorized();
+            
+            job.Active = !job.Active;
+
+            if (job.Active && job.WorkerId != null) {
+                job.Worker = null;
+                job.WorkerId = null;
+            }
+            
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+        
+        [HttpPut("api/{id:int}/assignWorker")]
+        [Authorize]
+        public async Task<IActionResult> AssignWorker(int id, [FromBody] string workerId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var job = await _context.JobOrders.FindAsync(id);
+            
+            if (job == null) return NotFound();
+            if(user.Id != job.PrincipalId) return Unauthorized();
+
+            var worker = await _context.ApplicationUsers.FindAsync(workerId);
+            
+            job.Active = false;
+            job.Worker = worker;
+            job.WorkerId = workerId;
+            
             await _context.SaveChangesAsync();
             return Ok();
         }
@@ -175,6 +217,34 @@ namespace OddJobs.Controllers
                 .Select(@t =>   new Tuple<JobOrder,double>(@t.jobOrder, @t.dist)).ToList();
         }
 
+        
+        [HttpPost("api/{jobId:int}/send")]
+        [Authorize]
+        public async Task<IActionResult> SendFirstMessage(int jobId, [FromBody] BasicMessage message)
+        {
+            if (message.MessageText.Length == 0) return BadRequest();
+            var jobOrder = await _context.JobOrders.FindAsync(jobId);
+            var user = await _userManager.FindByIdAsync(message.User);
+            
+            var thread = new Thread {
+                JobOrder = jobOrder,
+                InterestedUser = user,
+            };
+            
+            var mes = new Message {
+                MessageText = message.MessageText,
+                Thread = thread,
+                SendTime = DateTime.Now,
+                Sender = user,
+            };
+            
+            _context.Threads.Add(thread);
+            _context.Messages.Add(mes);
+            
+            await _context.SaveChangesAsync();
+            
+            return Ok(thread);
+        }
     }
     
     public class JobForm
@@ -186,6 +256,11 @@ namespace OddJobs.Controllers
         public double Lat { get; set; }
         public double Lng { get; set; }
         public string Address { get; set; }
+        public string User { get; set; }
+    }
+    public class BasicMessage
+    {
+        public string MessageText { get; set; }
         public string User { get; set; }
     }
 }

@@ -46,7 +46,7 @@ const AddJobForm = () => {
     
     return (
         <Row style={{marginLeft: "0px"}} className={"w-100 mt-3  d-flex align-items-center"}>
-            <Form style={{width: '80%'}} className={"mx-auto "} onSubmit={handleSubmit} >
+            <Form style={{width: '80%'}} className={"mx-auto"} onSubmit={handleSubmit} >
                 <Row>
                     <h4  className={" mx-auto text-light pb-4"}>Dodaj zlecenie</h4>
                 </Row>

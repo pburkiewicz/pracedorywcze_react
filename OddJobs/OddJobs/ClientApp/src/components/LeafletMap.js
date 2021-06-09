@@ -9,6 +9,7 @@ import './css/popup.css';
 import ReactDOMServer from 'react-dom/server';
 import {BrowserRouter} from "react-router-dom";
 import {MarkerClusterGroup} from "leaflet.markercluster/src";
+import authService from "./api-authorization/AuthorizeService";
 
 
 class Map extends React.Component {
@@ -18,13 +19,16 @@ class Map extends React.Component {
             position: [51.981497, 20.143433],
             zoom: 6,
             bounds: null,
-            bigBounds: null
+            bigBounds: null,
+            user: {}
         };
         this.OnUpdateMarkers = this.OnUpdateMarkers.bind(this);
     }
     
-    componentDidMount() {
-        this.isMountedVal = 1
+    async componentDidMount() {
+        this.isMountedVal = 1;
+        let u = await authService.getUser();
+        this.setState({user: u})
         this.map();
     }
     
@@ -48,7 +52,7 @@ class Map extends React.Component {
         const bounds = this.mapBox.getBounds();
         const zoom = this.mapBox.getZoom()
         const position = this.mapBox.getCenter();
-        console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
+        // console.log('bounds ' + bounds.toBBoxString() + "\nzoom " + zoom + "\nposition " + position);
         if (zoom < 7) {
             this.markerLayer.clearLayers();
             this.setState({
@@ -63,7 +67,7 @@ class Map extends React.Component {
         });
         if (this.ControlSetBigBounds(bounds)) return;
         if (this.isMountedVal === 0) return;
-        console.log(this.state.bigBounds)
+        // console.log(this.state.bigBounds)
         const response = await fetch("jobOrder/fetchData/" +
             this.state.bigBounds[3] +
             "/" + this.state.bigBounds[2] +
@@ -79,7 +83,7 @@ class Map extends React.Component {
         icons.forEach((item, index) =>
         {
             const marker = L.marker([item['latitude'], item['longitude']], {icon: greenIcon})
-                .bindPopup(ReactDOMServer.renderToString(<BrowserRouter><Popup id={index} item={item} style={{background: 'gray', backgroundColor: 'gray'}}/></BrowserRouter>))
+                .bindPopup(ReactDOMServer.renderToString(<BrowserRouter><Popup id={index} item={item} user={this.state.user} style={{background: 'gray', backgroundColor: 'gray'}}/></BrowserRouter>))
             this.markerLayer.addLayer(marker)
         })
         this.mapBox.addLayer(this.markerLayer);
@@ -90,11 +94,9 @@ class Map extends React.Component {
     }
 
     ControlSetBigBounds(bounds) {
-        console.log("aaa")
-        console.log(this.state.bigBounds)
+        // console.log(this.state.bigBounds)
         if (this.state.bigBounds==null) {
             this.SetBigBounds(bounds)
-            console.log("7")
             return false;
         }
         const verticalHole = bounds.getNorth() - bounds.getSouth();

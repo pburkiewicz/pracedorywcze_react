@@ -1,0 +1,34 @@
+﻿
+.messages {
+    list-style-type: none;
+}
+
+.receive{
+    float: left;
+    background: #393e46;
+    border-radius: 5px;
+}
+
+.send{
+    float: right;
+    background: #4aba70;
+    border-radius: 5px;
+}
+
+.message-box{
+    border: solid 1px rgba(0, 0, 0, 0.3);
+}
+
+.receive.triangle {
+    height: 15px;
+    width: 30px;
+    border-radius: 0px;
+    clip-path: polygon(100% 0, 10% 93%, 33% 0);
+}
+
+.send.triangle {
+    height: 15px;
+    width: 30px;
+    border-radius: 0px;
+    clip-path: polygon(67% 0, 90% 93%, 0 0);;
+}
