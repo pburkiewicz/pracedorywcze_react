@@ -42,7 +42,7 @@ class Popup extends React.Component {
                 <div id={Id} className="row">
                     <ul className="list-group bg-dark col " style={{width: '100%'}}>
                         <li className="list-group-item dark-grey-coll border-0">
-                            <h4 className="centered">{this.props.item['title']}</h4>
+                            <h4 className="centered">{this.props.item['title'].length <100 ? this.props.item['title'] : this.props.item['title'].substring(0,100)+'...' }</h4>
                         </li>
                         <li className="dark-grey-coll list-group-item d-flex justify-content-between align-items-center border-0">
                             <FontAwesomeIcon icon={faMoneyBill} size="3x"/>
@@ -56,7 +56,7 @@ class Popup extends React.Component {
                             <FontAwesomeIcon icon={faClock} size="3x"/>
                             <p style={{fontSize: "16px"}}>{this.pad(date.getHours(), 2)} : {this.pad(date.getMinutes(), 2)}</p>
                         </li>
-                        <li className="dark-grey-coll list-group-item d-flex justify-content-between align-items-center border-0">
+                        <li className="dark-grey-coll list-group-item  justify-content-between align-items-center border-0 text-center">
                             <Link to={`/jobOrder/${this.props.item.id}`} style={{color: "rgb(213,213,213); !important"}}
                                   className={"btn btn-success"}><FontAwesomeIcon icon={faInfoCircle} size="3x"/></Link>
                             {component}
