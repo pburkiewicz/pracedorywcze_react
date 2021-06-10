@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using OddJobs.Models;
 
 namespace OddJobs.Areas.Identity.Pages.Account
@@ -37,61 +36,77 @@ namespace OddJobs.Areas.Identity.Pages.Account
             _emailSender = emailSender;
         }
 
-        [BindProperty]
-        public InputModel Input { get; set; }
-
         public string ReturnUrl { get; set; }
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        public class InputModel
-        {
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
-            public string Email { get; set; }
+        [BindProperty]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        [JsonProperty(PropertyName = "Email")]
+        [Remote("CheckUserExist", "Validation", HttpMethod = "POST",
+            ErrorMessage = "Użytkownik o tym adresie już istnieje")]
+        public string Email { get; set; }
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
-            [Display(Name = "Hasło")]
-            public string Password { get; set; }
+        [BindProperty]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [StringLength(100, ErrorMessage = "The {0} musi posiadać minimalnie {2}, a maksymalnie {1} znaków",
+            MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Hasło")]
+        public string Password { get; set; }
 
-            [DataType(DataType.Password)]
-            [Display(Name = "Powtórz hasło")]
-            [Compare("Password", ErrorMessage = "Hasło i jego powtórzenie nie są takie smae")]
-            public string ConfirmPassword { get; set; }
-            
-            [Required]
-            [Display(Name = "Imię")]
-            public string FirstName { get; set; }
-            
-            [Required]
-            [Display(Name = "Nazwisko")]
-            public string LastName { get; set; }
-            
-            [Required]
-            [Display(Name = "Nazwisko")]
-            public string City { get; set; }
-            
-            [Required]
-            [Display(Name = "Nazwisko")]
-            public string Street { get; set; }
-            
-            [Display(Name = "Numer domu")]
-            public uint HouseNumber { get; set; }
-            
-            [Display(Name = "Numer mieszkania")]
-            public uint FlatNumber { get; set; }
-            
-            [Required]
-            [Display(Name = "Kod pocztowy")]
-            public string ZipCode { get; set; }
-            
-            [Required]
-            [Display(Name = "Numer telefonu")]
-            public string PhoneNumber { get; set; }
-        }
+        [BindProperty]
+        [DataType(DataType.Password)]
+        [Display(Name = "Powtórz hasło")]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [Compare("Password", ErrorMessage = "Hasło i jego powtórzenie nie są takie smae")]
+        public string ConfirmPassword { get; set; }
+
+        [BindProperty]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [Display(Name = "Imię")]
+        public string FirstName { get; set; }
+
+        [BindProperty]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [Display(Name = "Nazwisko")]
+        public string LastName { get; set; }
+
+        [BindProperty]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [Display(Name = "Miasto")]
+        public string City { get; set; }
+
+        [BindProperty]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [Display(Name = "Ulica")]
+        public string Street { get; set; }
+
+        [BindProperty]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [Display(Name = "Numer domu")]
+        
+        [RegularExpression(@"^[0-9]*$", ErrorMessage = "Pole musi zawierać tylko cyfry")]
+        public string HouseNumber { get; set; }
+
+        [BindProperty]
+        [Display(Name = "Numer mieszkania")]
+        [RegularExpression(@"^[0-9]*$", ErrorMessage = "Pole musi zawierać tylko cyfry")]
+        public string FlatNumber { get; set; }
+
+        [BindProperty]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [RegularExpression(@"^[0-9]{2}-[0-9]{3}$", ErrorMessage = "Pole musi zostać sformatowane ##-###")]
+        [Display(Name = "Kod pocztowy")]
+        public string ZipCode { get; set; }
+
+        [BindProperty]
+        [RegularExpression(@"^[0-9]{9}$", ErrorMessage = "Pole musi zawierać tylko cyfry")]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [Display(Name = "Numer telefonu")]
+        public string PhoneNumber { get; set; }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -107,19 +122,19 @@ namespace OddJobs.Areas.Identity.Pages.Account
             {
                 var user = new ApplicationUser
                 {
-                    UserName = Input.Email, 
-                    Email = Input.Email,
-                    FirstName = Input.FirstName,
-                    LastName = Input.LastName,
-                    City = Input.City,
-                    Street = Input.Street,
-                    HouseNumber = uint.Parse(Input.HouseNumber.ToString()),
-                    FlatNumber =  uint.Parse(Input.FlatNumber.ToString()),
-                    ZipCode = Input.ZipCode,
+                    UserName = Email,
+                    Email = Email,
+                    FirstName = FirstName,
+                    LastName = LastName,
+                    City = City,
+                    Street = Street,
+                    HouseNumber = uint.Parse(HouseNumber),
+                    FlatNumber = uint.Parse(FlatNumber),
+                    ZipCode = ZipCode,
                     EmailConfirmed = true,
-                    PhoneNumber = Input.PhoneNumber
+                    PhoneNumber = PhoneNumber
                 };
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                var result = await _userManager.CreateAsync(user, Password);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
@@ -129,7 +144,7 @@ namespace OddJobs.Areas.Identity.Pages.Account
                     var callbackUrl = Url.Page(
                         "#",
                         pageHandler: null,
-                        values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
+                        values: new {area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl},
                         protocol: Request.Scheme);
                     //
                     // await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
@@ -138,7 +153,7 @@ namespace OddJobs.Areas.Identity.Pages.Account
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return Redirect("/");
-                        return RedirectToPage(returnUrl, new { email = Input.Email, returnUrl = returnUrl });
+                        // return RedirectToPage(returnUrl, new { email = Input.Email, returnUrl = returnUrl });
                     }
                     else
                     {
@@ -146,6 +161,7 @@ namespace OddJobs.Areas.Identity.Pages.Account
                         return LocalRedirect(returnUrl);
                     }
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
