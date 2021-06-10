@@ -51,7 +51,7 @@ export class Logout extends Component {
             return <div></div>
         }
         if (!!message) {
-            return (<div className="w-100 h-100 d-flex align-items-center">
+            return (<div className="w-100 h-100 mt-3">
                 <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
                     <Row>
                         <Col sm={2}>
@@ -68,7 +68,7 @@ export class Logout extends Component {
             const action = this.props.action;
             switch (action) {
                 case LogoutActions.Logout:
-                    return (<div className="w-100 h-100 d-flex align-items-center">
+                    return (<div className="w-100 h-100 mt-3">
                         <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
                             <Row>
                                 <Col sm={2}>
@@ -81,7 +81,7 @@ export class Logout extends Component {
                         </div>
                     </div>);
                 case LogoutActions.LoggedOut:
-                    return (<div className="w-100 h-100 d-flex align-items-center">
+                    return (<div className="w-100 h-100 mt-3">
                         <div className="alert alert-success w-50 mx-auto bg-dark" role="alert">
                             <Row>
                                 <Col sm={2}>

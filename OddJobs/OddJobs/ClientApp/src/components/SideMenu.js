@@ -7,22 +7,22 @@ import {
   faEnvelope,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import {NavItem, NavLink, Nav, Row, Col, Container, Navbar} from "reactstrap";
+import {NavItem, NavLink, Nav, Row, Col} from "reactstrap";
 import { Link } from "react-router-dom";
+import './css/menu.css'
 
-
-const SideBar = ({ isOpen, toggle }) => (
+const SideBar = () => (
     <div >
       <div className="side-menu">
         <Nav color="dark" vertical className="" >
-          <NavItem className={"w-100"} color="dark" dark>
-            <NavLink tag={Link} to={"/add"} className={"p-0 pt-2"} style={{color: '#d5d5d5', textDecoration: 'none'}} >
+          <NavItem className={"w-100 mt-2"} color="dark" dark>
+            <NavLink tag={Link} to={"/add"} className={"p-0 pt-2"} style={{color: '#d5d5d5', textDecoration: 'none'}} onHover={(e) =>console.log(e)} >
               <Row>
                 <Col md={12} className={"d-flex justify-content-center"}>
                   <FontAwesomeIcon icon={faPlus} size={"2x"} />
                 </Col>
                 <Col md={12} className={"d-flex justify-content-center"}>
-                  <p style={{fontSize: "13px"}}>Dodaj</p>
+                  <p style={{fontSize: "12px"}}>Dodaj</p>
                 </Col>
               </Row>
             </NavLink>
@@ -34,7 +34,7 @@ const SideBar = ({ isOpen, toggle }) => (
                   <FontAwesomeIcon icon={faMapMarkedAlt} size={"2x"} />
                 </Col>
                 <Col md={12} className={"d-flex justify-content-center"}>
-                  <p style={{fontSize: "13px"}}>Mapa</p>
+                  <p style={{fontSize: "12px"}}>Mapa</p>
                 </Col>
               </Row>
             </NavLink>
@@ -47,7 +47,7 @@ const SideBar = ({ isOpen, toggle }) => (
                   <FontAwesomeIcon icon={faList} size={"2x"} />
                 </Col>
                 <Col md={12} className={"d-flex justify-content-center"}>
-                  <p style={{fontSize: "13px"}}>Lista</p>
+                  <p style={{fontSize: "12px"}}>Lista</p>
                 </Col>
               </Row>
             </NavLink>
@@ -60,7 +60,7 @@ const SideBar = ({ isOpen, toggle }) => (
                   <FontAwesomeIcon icon={faEnvelope} size={"2x"} />
                 </Col>
                 <Col md={12} className={"d-flex justify-content-center"}>
-                  <p style={{fontSize: "13px"}}>Wiadomości</p>
+                  <p style={{fontSize: "12px"}}>Wiadomości</p>
                 </Col>
               </Row>
             </NavLink>
@@ -73,7 +73,7 @@ const SideBar = ({ isOpen, toggle }) => (
                   <FontAwesomeIcon icon={faUserAlt} size={"2x"} />
                 </Col>
                 <Col md={12} className={"d-flex justify-content-center"}>
-                  <p style={{fontSize: "13px"}}>Użytkownik</p>
+                  <p style={{fontSize: "12px"}}>Użytkownik</p>
                 </Col>
               </Row>
             </NavLink>
