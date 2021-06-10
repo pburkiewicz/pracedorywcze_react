@@ -31,21 +31,30 @@ function JobList (props) {
     let col = [
         {
             name: 'Tytuł',
-            selector: 'title',
+            cell: row =>
+                <span style={{cursor : "pointer"}} onClick={() => alert(row['title'])}>
+                    {row['title'].length <100 ? row['title'] : row['title'].substring(0,100)+'...' }
+                </span>,
             sortable: true,
-            center: true
+            center: true,
 
         },
         {
             name: 'Opis',
             selector: 'description',
-            center: true
+            cell: row =>
+                <span style={{cursor : "pointer"}} className="cursor-pointer" onClick={() => alert(row['description'])}>
+                    {row['description'].length <300 ? row['description'] : row['description'].substring(0,300)+'...' }
+                </span>,
+            center: true,
+            wrap: true
         },
         {
             name: 'Wynagrodzenie',
             selector: 'payment',
             sortable: true,
-            center: true
+            center: true,
+            wrap: true
         },
         {
             name: 'Aktywne Do',
@@ -69,6 +78,7 @@ function JobList (props) {
         {
             name: 'Szczegóły',
             selector: 'link',
+            
             center: true,
             cell: row =>
                 <a href={row.link}>
