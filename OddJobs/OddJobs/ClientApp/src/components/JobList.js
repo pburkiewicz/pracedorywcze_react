@@ -1,12 +1,8 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import DataTable from 'react-data-table-component';
-import {
-    faLink, faPhone
-} from "@fortawesome/free-solid-svg-icons";
+import {faLink} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import authService from "./api-authorization/AuthorizeService";
-
-
 
 
 function JobList (props) {
@@ -138,10 +134,8 @@ function JobList (props) {
     
     const adrStr = (adr) =>
     {
-        let adr_str = adr['city']+', ' +adr['road']
-        if (adr['house_number']) adr_str+=', ' + adr['house_number'];
-        adr_str+=', ' + adr['postcode'];
-        return adr_str;
+        return (adr['city']!==undefined ? adr['city'] + ', ': "") + (adr['road']!==undefined ? adr['road'] + ', ' : "")
+            + (adr['house_number']!==undefined ? adr['house_number'] + ', ': "") + (adr['postcode']!==undefined ? adr['postcode'] : "");
     }
     
     const getLocation= async() =>
