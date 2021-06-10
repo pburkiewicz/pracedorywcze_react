@@ -10,6 +10,7 @@ import ReactDOMServer from 'react-dom/server';
 import {BrowserRouter} from "react-router-dom";
 import {MarkerClusterGroup} from "leaflet.markercluster/src";
 import authService from "./api-authorization/AuthorizeService";
+import * as GeoSearch from "leaflet-geosearch";
 
 
 class Map extends React.Component {
@@ -40,6 +41,15 @@ class Map extends React.Component {
         this.mapBox = L.map('map', {maxZoom: 18}).setView(this.state.position, this.state.zoom);
         this.mapBox.locate({setView : true, maxZoom: 13});
         L.control.locate().addTo(this.mapBox);
+        const provider = new GeoSearch.OpenStreetMapProvider()
+        let search = new GeoSearch.GeoSearchControl({
+            provider: provider,
+            style: 'bar',
+            searchLabel: 'Wyszukaj na mapie',
+            showPopup: false,
+            showMarker: false
+        });
+        this.mapBox.addControl(search);
         this.mapBox.on('moveend',this.OnUpdateMarkers);
         this.markerLayer = new MarkerClusterGroup()
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {

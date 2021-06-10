@@ -40,7 +40,6 @@ class FormMap extends React.Component {
             showPopup: false,
             showMarker: false
         });
-        
         this.mapBox.addControl(search);
         let marker = undefined;
         if(this.props.address){
@@ -48,6 +47,10 @@ class FormMap extends React.Component {
             marker = new L.marker(this.props.coordinates, {icon: greenIcon});
             this.mapBox.addLayer(marker);
             search.container.firstChild[0].value = this.props.address;
+        }
+        else
+        {
+            this.mapBox.locate({setView : true, maxZoom: 13});
         }
         
         this.mapBox.on('geosearch/showlocation', function(e){
