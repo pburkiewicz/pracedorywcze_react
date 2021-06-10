@@ -42,6 +42,7 @@
         <Content Include="ClientApp\src\components\AddJob.js" />
         <Content Include="ClientApp\src\components\css\detailsStyle.css" />
         <Content Include="ClientApp\src\components\css\formStyle.css" />
+        <Content Include="ClientApp\src\components\css\menu.css" />
         <Content Include="ClientApp\src\components\css\messagesStyle.css" />
         <Content Include="ClientApp\src\components\DetailsMap.js" />
         <Content Include="ClientApp\src\components\EditJob.js" />
