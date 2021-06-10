@@ -27,36 +27,72 @@ function JobList (props) {
                 backgroundColor: 'darkred'
             }
         }];
+
+    const customStyles = {
+        rows: {
+            style: {
+                minHeight: '72px',
+                '&:hover':{
+                    cursor: 'pointer',
+                }
+            }
+        },
+        headCells: {
+            style: {
+                paddingLeft: '8px',
+                paddingRight: '8px',
+                fontSize: '1em',
+                '&:hover': {
+                    color: "rgb(163,161,161)"
+                }
+            },
+        },
+        cells: {
+            style: {
+                paddingLeft: '8px',
+                paddingRight: '8px',
+                paddingTop: '5px',
+                paddingBottom: '5px',
+            },
+        },
+
+    };
     
     let col = [
         {
             name: 'Tytuł',
-            selector: 'title',
+            cell: row =>
+                <div>
+                    <span className="font-weight-bold" style={{cursor : "pointer"}} onClick={() => alert(row['title'])}>
+                        {row['title'].length <100 ? row['title'] : row['title'].substring(0,100)+'...' }
+                    </span> <br/><br/>
+                    <span style={{cursor : "pointer"}} className="cursor-pointer" onClick={() => alert(row['description'])}>
+                    {row['description'].length <300 ? row['description'] : row['description'].substring(0,300)+'...' }
+                    </span>
+                </div>,
             sortable: true,
-            center: true
-
-        },
-        {
-            name: 'Opis',
-            selector: 'description',
-            center: true
+            left: true,
         },
         {
             name: 'Wynagrodzenie',
             selector: 'payment',
             sortable: true,
-            center: true
+            center: true,
+            width: '15%',
+            wrap: true
         },
         {
             name: 'Aktywne Do',
             selector: 'activeData',
             sortable: true,
+            width: '15%',
             center: true
         },
         { name: 'Odległość',
             selector: 'distance',
             sortable: true,
             center: true,
+            width: '15%',
             omit: false
         },
         {
@@ -64,11 +100,13 @@ function JobList (props) {
             selector: 'status',
             sortable: true,
             center: true,
+            width: '15%',
             omit: true
         },
         {
             name: 'Szczegóły',
             selector: 'link',
+            width: '15%',
             center: true,
             cell: row =>
                 <a href={row.link}>
@@ -112,11 +150,11 @@ function JobList (props) {
             return <h3 style={{color: props.color}}>Brak dostępnych zleceń...</h3>
         }
         return <DataTable
-            highlightOnHover
-            pagination
-            theme = "dark"
+            striped
+            theme="dark"
             conditionalRowStyles = {conditionalRowStyles}
             title="Zlecenia w twojej okolicy"
+            customStyles={customStyles}
             columns={columns}
             data={jobs}
         />;
