@@ -91,6 +91,7 @@ namespace OddJobs.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateJob(int id, [FromBody] JobForm jobForm)
         {
+            if (jobForm.Description.Length > 2000 || jobForm.Title.Length > 200) return BadRequest();
             var job = await _context.JobOrders.FindAsync(id);
             if (job == null) return NotFound();
             var user = await _userManager.GetUserAsync(User);
@@ -177,7 +178,7 @@ namespace OddJobs.Controllers
         public async Task<IActionResult> AddJob([FromBody] JobForm jobForm)
         {
             // var user = HttpContext.User.Identity.Name;
-
+            if (jobForm.Description.Length > 2000 || jobForm.Title.Length > 200) return BadRequest();
             var user = await _userManager.FindByIdAsync(jobForm.User);
             
             var jobOrder = new JobOrder

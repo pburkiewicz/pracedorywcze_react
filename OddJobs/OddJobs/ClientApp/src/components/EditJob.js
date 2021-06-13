@@ -8,11 +8,11 @@ import LoadingCard from "./Loading";
 
 const EditJobForm = (props) => {
     const history = useHistory();
-    const [title, setTitle] = useState()
-    const [description, setDescription] = useState()
-    const [proposedPayment, setProposedPayment] = useState()
+    const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("")
+    const [proposedPayment, setProposedPayment] = useState("")
     const [date, setDate] = useState()
-    const [address, setAddress] = useState();
+    const [address, setAddress] = useState("");
     const [coordinates, setCoordinates] = useState({lat: null, lng: null});
     const [error, setError] = useState(null);
     const [job, setJob] = useState(null);
@@ -48,6 +48,7 @@ const EditJobForm = (props) => {
     
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if(description.length > 2000 || title.length > 200 ) return ;
         const user =await authService.getUser();
         let correctDate = date;
         let parts = date.toString().split('.');
@@ -86,9 +87,10 @@ const EditJobForm = (props) => {
                         <Col>
                             <FormGroup >
                                 {/*<Label for="Title" className={"text-light mb-1"}>Tytuł</Label>*/}
-                                <Input name="Tytuł" value={title} onChange={(e) => setTitle(e.target.value)}
-                                       id="TitleId" placeholder="Tytuł"/>
-                                
+                                <Input name="Tytuł" value={title} onChange={(e) => setTitle(e.target.value) }
+                                       id="TitleId" placeholder="Tytuł" invalid={title.length >= 200}/>
+                                {title.length >= 200 ? <FormText className={"text-danger"}>max. 200 znaków ({title ? title.length : 0}/200)</FormText> :[]}
+
                                 {/*<p>Somewhere in here is a <span style={{textDecoration: "underline", color:"blue"}} href="#" id="TooltipExample">tooltip</span>.</p>*/}
                                 <Tooltip placement="left" isOpen={tooltipOpen.title} target="TitleId" 
                                          toggle={() => setTooltipOpen({title: !tooltipOpen.title})}>
@@ -99,11 +101,13 @@ const EditJobForm = (props) => {
                                 {/*<Label for="Description" className={"text-light  mb-1"}>Opis zlecenia</Label>*/}
                                 <Input type="textarea" value={description} style={{resize: "none"}}
                                        onChange={(e) => setDescription(e.target.value)} name="Description"
-                                       id="DescriptionId" placeholder="Opis Zlecenia" rows={10}/>
+                                       id="DescriptionId" placeholder="Opis Zlecenia" rows={10} invalid={ description.length >= 2000}/>
                                 <Tooltip placement="left" isOpen={tooltipOpen.description} target="DescriptionId" 
                                          toggle={() => setTooltipOpen({description: !tooltipOpen.descriptions})}>
                                     Opis Zlecenia
                                 </Tooltip>
+                                {description.length >= 2000 ? <FormText className={"text-danger"}>max. 2000 znaków ({description ? description.length : 0}/2000)</FormText> :[]}
+
                             </FormGroup>
                             <FormGroup>
                                 {/*<Label for="salary" className={"text-light mb-1"}>Wynagrodzenia</Label>*/}

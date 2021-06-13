@@ -58,11 +58,11 @@ const AssignWorkerPopup = ({setModal, modal, setRefresh, jobId}) => {
     
     const body = users.length ? <> Zleć pracę użytkownikowi z listy zainteresowanych Twoim zleceniem.
     <Input className={"mt-2"} type="select" id="exampleCustomSelect" name="customSelect"
-           onChange={(e) => setWorker(e.target.value)} invalid={ worker == 0 ? true: false}>
+           onChange={(e) => setWorker(e.target.value)} invalid={ worker === 0}>
         <option value="0" className={"text-secondary"}>Wybierz użytkownika</option>
         {options}
     </Input>
-    {worker == 0 ? <small className={"text-danger"}>Musisz wybrać użytkownika</small> : console.log(worker)}
+    {worker === 0 ? <small className={"text-danger"}>Musisz wybrać użytkownika</small> : []}
     <div className="alert alert-danger w-100 mx-auto bg-dark mt-4 " role="alert">
         <Row>
             <Col sm={2} className={"d-flex align-items-center"}>
