@@ -13,7 +13,7 @@ const ThreadsList = () => {
     const [threads, setThreads] = useState(null);
     const [user, setUser] = useState({})
 
-    createTheme('solarized', {
+    createTheme('darkmode', {
         text: {
             primary: '#e8e8e8',
             secondary: '#9c9c9c',
@@ -166,7 +166,11 @@ const ThreadsList = () => {
                     <DataTable columns={columns} data={threads}
                                                        highlightOnHover
                                                        pagination
-                                                       theme="solarized"
+                                                        paginationComponentOptions={{   
+                                                                rowsPerPageText: "Wierszy na stronie",
+                                                                rangeSeparatorText: "z", 
+                                                                selectAllRowsItemText: "wszystko"}}
+                                                       theme="darkmode"
                                                        progressComponent={<Loading/>}
                                                        progressPending={false}
                                                        customStyles={customStyles}

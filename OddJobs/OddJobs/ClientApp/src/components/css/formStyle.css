@@ -26,39 +26,6 @@
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
     padding: 30px;
 }
-/*.login-register-form h4 {*/
-/*    text-align: center;*/
-/*    font-size: 22px;*/
-/*    margin-bottom: 20px;*/
-/*}*/
-/*.login-register-form .avatar {*/
-/*    color: #313131;*/
-/*    margin: 0 auto 30px;*/
-/*    text-align: center;*/
-/*    width: 100px;*/
-/*    height: 100px;*/
-/*    border-radius: 50%;*/
-/*    z-index: 9;*/
-/*    background: #4aba70;*/
-/*    padding: 15px;*/
-/*    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);*/
-/*}*/
-/*.login-register-form .avatar i {*/
-/*    font-size: 62px;*/
-/*}*/
-
-/*.register-form .avatar i {*/
-/*    padding-top: 5px;*/
-/*}*/
-/*.login-register-form .form-group {*/
-/*    margin-bottom: 20px;*/
-/*}*/
-/*.login-register-form .form-control, .login-form .btn {*/
-/*    min-height: 40px;*/
-/*    border-radius: 2px;*/
-/*    transition: all 0.5s;*/
-/*    background: #313131*/
-/*}*/
 
 .custom-button-green {
     background: #4aba70 !important;
@@ -66,28 +33,34 @@
     line-height: normal;
 }
 
-.btn.custom-button-green:hover, .btn:focus.custom-button-green {
+.btn.custom-button-green:hover, .btn:focus.custom-button-green, .btn.custom-button-green.active{
     background: #339757 !important;
     color: #f8f9fa;
 }
 
-/*.custom-button-green:hover{*/
-/*    background: #339757 !important;*/
-/*    color: #f8f9fa;*/
-/*}*/
-/*.login-register-form .checkbox-inline {*/
-/*    float: left;*/
-/*}*/
-/*.login-register-form input[type="checkbox"] {*/
-/*    margin-top: 2px;*/
-/*    background: #313131;*/
-/*}*/
-/*.login-register-form .forgot-link {*/
-/*    float: right;*/
-/*}*/
-/*.login-register-form .small {*/
-/*    font-size: 13px;*/
-/*}*/
+.custom-button-red {
+    background: #d9534f !important;
+    border: none;
+    line-height: normal;
+}
+
+.btn.custom-button-red:hover, .btn:focus.custom-button-red, .btn.custom-button-red.active {
+    background: #b84642 !important;
+    color: #f8f9fa;
+}
+
+.custom-button-blue {
+    background: #0c7ce2 !important;
+    border: none;
+    line-height: normal;
+}
+
+.btn.custom-button-blue:hover, .btn:focus.custom-button-blue, .btn.custom-button-blue.active {
+    background: #1479d2 !important;
+    color: #f8f9fa;
+}
+
+
  a .custom-link{
     color: #4aba70;
 }

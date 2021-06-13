@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from "react";
-import DataTable from 'react-data-table-component';
+import DataTable, {createTheme} from 'react-data-table-component';
 import {faLink} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import authService from "./api-authorization/AuthorizeService";
+import {Col} from "reactstrap";
+import Loading from "./Loading";
 
 
 function JobList (props) {
@@ -28,12 +30,35 @@ function JobList (props) {
             }
         }];
 
+    createTheme('darkmode', {
+        text: {
+            primary: '#e8e8e8',
+            secondary: '#9c9c9c',
+        },
+        background: {
+            default: '#393e46',
+        },
+        context: {
+            text: '#FFFFFF',
+        },
+        divider: {
+            default: 'rgba(0, 0, 0, 0.3)',
+        },
+        highlightOnHover: {
+            default: 'rgb(69,76,85)',
+            text: 'rgba(255,255,255,0.87)',
+        },
+        sortFocus: {
+            default: 'rgba(255, 255, 255, .54)',
+        },
+    });
+    
     const customStyles = {
         rows: {
             style: {
                 minHeight: '72px',
                 '&:hover':{
-                    cursor: 'pointer',
+                    // cursor: 'pointer',
                 }
             }
         },
@@ -62,10 +87,10 @@ function JobList (props) {
         {
             name: 'Tytuł',
             cell: row =>
-                <div>
+                <div className={"pt-1 pb-1"}>
                     <span className="font-weight-bold" style={{cursor : "pointer"}} onClick={() => alert(row['title'])}>
                         {row['title'].length <100 ? row['title'] : row['title'].substring(0,100)+'...' }
-                    </span> <br/><br/>
+                    </span> <br className={"m-1"}/>
                     <span style={{cursor : "pointer"}} className="cursor-pointer" onClick={() => alert(row['description'])}>
                     {row['description'].length <300 ? row['description'] : row['description'].substring(0,300)+'...' }
                     </span>
@@ -110,7 +135,7 @@ function JobList (props) {
             center: true,
             cell: row =>
                 <a href={row.link}>
-                    <FontAwesomeIcon icon={faLink}  size="3x"/>
+                    <FontAwesomeIcon icon={faLink}  size="2x" color={"#4aba70"}/>
                 </a>
         }
     ];
@@ -150,13 +175,19 @@ function JobList (props) {
             return <h3 style={{color: props.color}}>Brak dostępnych zleceń...</h3>
         }
         return <DataTable
-            striped
-            theme="dark"
+            theme="darkmode"
             conditionalRowStyles = {conditionalRowStyles}
             title="Zlecenia w twojej okolicy"
+            paginationComponentOptions={{
+                rowsPerPageText: "Wierszy na stronie",
+                rangeSeparatorText: "z",
+                selectAllRowsItemText: "wszystko"}}
             customStyles={customStyles}
             columns={columns}
             data={jobs}
+            highlightOnHover
+            pagination
+            
         />;
     }
 
@@ -253,8 +284,7 @@ function JobList (props) {
 
     useEffect(() => {
         setContent( loading
-            ?
-            <h2 style={{color: props.color}}><em>Proszę czekać, trwa pobieranie dostępnych ofert z serwera...</em></h2>
+            ? null
             : renderJobTable(jobs));
     },[loading]);
             
@@ -301,7 +331,7 @@ function JobList (props) {
             <div className="input-group mb-3">
                 <input type="text" className="form-control" onChange={handleInput} placeholder="Address" value={address}/>
                     <div className="input-group-append">
-                        <button className="btn btn-success" onClick={getLocation} type="submit">Szukaj</button>
+                        <button className="btn btn-success custom-button-green" onClick={getLocation} type="submit">Szukaj</button>
                     </div>
             </div>
             <div className="row">
@@ -312,12 +342,12 @@ function JobList (props) {
                         (myOrders === false && reported===false) ?
                             <div className="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
                                 {(roles)?
-                                <button className="btn btn-danger btn-sm "  onClick={() => setReported(true)}> Zgłoszone zlecenia</button> : null}
+                                <button className="btn btn-danger btn-sm custom-button-red"  onClick={() => setReported(true)}> Zgłoszone zlecenia</button> : null}
                                 {(user) ?
-                                <button className="btn btn-primary btn-sm "  onClick={() => setMyOrders(true)}> Moje zlecenia</button> : null}
-                                <button className={"btn btn-success btn-sm " + clicked[0]} onClick={() => changeBuff(0)}> 5 km</button>
-                                <button className={"btn btn-success btn-sm " + clicked[1]} onClick={() => changeBuff(1)}> 10 km</button>
-                                <button className={"btn btn-success btn-sm " + clicked[2]} onClick={() => changeBuff(2)}> 20 km</button>
+                                <button className="btn btn-primary btn-sm custom-button-blue "  onClick={() => setMyOrders(true)}> Moje zlecenia</button> : null}
+                                <button className={"btn btn-success btn-sm custom-button-green " + clicked[0]} onClick={() => changeBuff(0)}> 5 km</button>
+                                <button className={"btn btn-success btn-sm custom-button-green " + clicked[1]} onClick={() => changeBuff(1)}> 10 km</button>
+                                <button className={"btn btn-success btn-sm custom-button-green " + clicked[2]} onClick={() => changeBuff(2)}> 20 km</button>
                             </div>
                         
                             : <div className="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
@@ -326,7 +356,12 @@ function JobList (props) {
                     }
                 
             </div>
-        {content}
+            { content ?
+                <Col xs={12} className={"mx-auto pt-1"} style={{backgroundColor: "#393e46"}}>
+                    {content}
+                </Col> : <Loading className={"pt-2"} text={"oferty"} />
+            }
+            
         </div>
     );
     
