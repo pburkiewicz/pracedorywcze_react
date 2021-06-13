@@ -1,5 +1,5 @@
 ﻿import React, {useEffect, useState} from 'react'
-import {Col, Form, FormGroup, Input, Label, Row} from "reactstrap";
+import {Col, Form, FormGroup, FormText, Input, Label, Row} from "reactstrap";
 import authService from "../api-authorization/AuthorizeService";
 import '../css/formStyle.css'
 import {Link, useHistory} from "react-router-dom";
@@ -51,7 +51,7 @@ const Chat = (props) => {
     const sendMessage = async (event) => {
         event.preventDefault();
         console.log("Ślę wiadomość")
-
+        if(textMessage.length >= 200) return;
         const message = {
             MessageText: textMessage,
             User: user.sub
@@ -142,6 +142,7 @@ const Chat = (props) => {
                     <Col sm={10} className={""}>
                         <Input value={textMessage} type="textarea" style={{resize: "none"}} onChange={(e) => setTextMessage(e.target.value)}
                                name="message" id="message" placeholder="Wiadomość..." rows={3} />
+                        {textMessage.length >= 200 ? <small className={"text-danger"}>max. 200 znaków ({textMessage ? textMessage.length : 0}/200)</small> :[]}
                     </Col>
                     <Col sm={2} className={"pl-0"}>
                         <Input type={"submit"} disabled={!textMessage.length} className={"btn custom-button-green"} value={"Wyślij"} onClick={sendMessage}/>

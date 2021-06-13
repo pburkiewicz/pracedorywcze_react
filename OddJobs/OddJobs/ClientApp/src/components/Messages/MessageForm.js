@@ -31,7 +31,7 @@ const MessageForm = (props) => {
         console.log("Ślę wiadomość")
 
         const user = await authService.getUser();
-        
+        if(textMessage.length >= 200) return;
         const message = {
             MessageText: textMessage,
             User: user.sub
@@ -81,6 +81,7 @@ const MessageForm = (props) => {
                     </Col>
                     <Col sm={2} className={"pl-0"}>
                         <Input type={"submit"} disabled={!textMessage.length} className={"btn custom-button-green"} value={"Wyślij"} onClick={sendMessage}/>
+                        {textMessage.length >= 200 ? <small className={"text-danger"}>max. 200 znaków ({textMessage ? textMessage.length : 0}/200)</small> :[]}
                     </Col>
                 </Row>
             </Col>

@@ -69,7 +69,7 @@ namespace OddJobs.Controllers
         [Authorize]
         public async Task<IActionResult> SendMessage(Guid threadId, [FromBody] BasicMessage message)
         {
-            if (message.MessageText.Length == 0) return BadRequest();
+            if (message.MessageText.Length == 0 || message.MessageText.Length > 200) return BadRequest();
             var threads = await _context.Threads.Where(t => t.Id == threadId)
                 .Include(t => t.JobOrder).Include(t=>t.InterestedUser).ToListAsync();
             
