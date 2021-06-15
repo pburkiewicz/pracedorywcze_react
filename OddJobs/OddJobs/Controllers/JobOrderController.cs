@@ -230,6 +230,8 @@ namespace OddJobs.Controllers
             var thread = new Thread {
                 JobOrder = jobOrder,
                 InterestedUser = user,
+                InterestedUserRead = true,
+                PrincipalRead = false
             };
             
             var mes = new Message {

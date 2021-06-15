@@ -9,7 +9,7 @@ import {faBriefcase, faUserCircle,faAt} from "@fortawesome/free-solid-svg-icons"
 import '../css/messagesStyle.css';
 import '../css/formStyle.css';
 
-const Chat = (props) => {
+const Chat = ({match}) => {
     const [textMessage, setTextMessage] = useState("");
     const [updateMessages, setUpdateMessages] = useState(true)
     const [messages, setMessages] = useState([]);
@@ -23,14 +23,14 @@ const Chat = (props) => {
             method: 'GET',
             headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
         };
-        await fetch(`message/api/${props.match.params.id}/messages`, requestOptions)
+        await fetch(`message/api/${match.params.id}/messages`, requestOptions)
             .then(async response => {
                 let result = await response.json();
                 setMessages(result);
                 setUpdateMessages(false)
             })
         
-        await fetch(`message/api/${props.match.params.id}`, requestOptions)
+        await fetch(`message/api/${match.params.id}`, requestOptions)
             .then(async response => {
                 let result = await response.json();
                 console.log(result)
@@ -40,7 +40,24 @@ const Chat = (props) => {
                     setFriend(result.jobOrder.principal);
                 }
                 setThread(result);
-            })
+                requestOptions.method = "PUT";
+                if(user.sub === result.jobOrder.principalId) {
+                    if(!result.principalRead) {
+                        await fetch(`message/api/${match.params.id}`, requestOptions)
+                            .then(async response => response.ok ? console.log("Przeczytano") : console.log(response));
+                        
+                    }
+                    
+                }else if(user.sub === result.interestedUser.Id){
+                    if(!result.interestedUserRead){
+                        await fetch(`message/api/${match.params.id}`, requestOptions)
+                            .then(async response => response.ok ? console.log("Przeczytano") : console.log(response));
+                    }
+                }
+                    
+            });
+        
+            
     }
 
     useEffect( async () => {
@@ -64,7 +81,7 @@ const Chat = (props) => {
             body: JSON.stringify(message)
         };
     
-        await fetch(`message/api/${props.match.params.id}`, requestOptions).then(async (response)=>{
+        await fetch(`message/api/${match.params.id}`, requestOptions).then(async (response)=>{
             if(response.ok){
                 setTextMessage("")
                 setUpdateMessages(true);

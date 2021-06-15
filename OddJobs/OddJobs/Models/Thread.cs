@@ -16,5 +16,9 @@ namespace OddJobs.Models
         [Required]
         public JobOrder JobOrder { get; set; }
         
+        public bool InterestedUserRead { get; set; }
+        
+        public bool PrincipalRead { get; set; }
+        
     }
 }

@@ -6,7 +6,13 @@ import {Link, useHistory} from "react-router-dom";
 import Loading from "../Loading";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faTimesCircle, faEnvelopeSquare, faHeartBroken} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, 
+    faTimesCircle, 
+    faEnvelopeSquare,
+    faEnvelope,
+    faEnvelopeOpen,
+    faHeartBroken} from "@fortawesome/free-solid-svg-icons";
+
 
 const ThreadsList = () => {
     const history = useHistory()
@@ -78,7 +84,7 @@ const ThreadsList = () => {
             .then(async response => {
                 let result = await response.json();
                 setThreads(result);
-        })
+        });
         let header = document.getElementsByClassName("sc-fnVZcZ fjcLNf rdt_TableHeader")
         if( header.length !== 0) header.item(0).remove()
 
@@ -86,7 +92,20 @@ const ThreadsList = () => {
     
     useEffect(async () => await fetchThreads(), []);
     
-    const columns = [ {
+    const columns = [ 
+            {
+                // name: "Odebrane",
+                center: true,
+                cell: (e) => {
+                    console.log(e.message.thread.interestedUserRead);
+                    if (user.sub === e.message.thread.jobOrder.principalId) {
+                        return e.message.thread.principalRead ? <FontAwesomeIcon icon={faEnvelopeOpen} size={"2x"} color={"rgb(92,102,114)"}/> : <FontAwesomeIcon icon={faEnvelope} size={"2x"}  color={"#4aba70"} />
+                    } else {
+                        return e.message.thread.interestedUserRead ? <FontAwesomeIcon icon={faEnvelopeOpen} size={"2x"} color={"rgb(92,102,114)"}/> : <FontAwesomeIcon icon={faEnvelope} size={"2x"} color={"#4aba70"}/>
+                    }
+                }
+            },
+            {
             name: 'Wiadomość',
             selector: 'message.messageText',
             sortable: true,

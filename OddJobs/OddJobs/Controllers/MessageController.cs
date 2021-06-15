@@ -80,12 +80,25 @@ namespace OddJobs.Controllers
             var user = await _userManager.GetUserAsync(User);
             
             if (!(user.Id != thread.InterestedUser.Id || user.Id != thread.JobOrder.PrincipalId)) return Unauthorized();
+
+            if (user.Id == thread.InterestedUser.Id)
+            {
+                thread.InterestedUserRead = true;
+                thread.PrincipalRead = false;
+            }
+            else
+            {
+                thread.InterestedUserRead = false;
+                thread.PrincipalRead = true;
+            }
+
             var mes = new Message {
                 MessageText = message.MessageText,
                 Thread = thread,
                 SendTime = DateTime.Now,
                 Sender = user,
             };
+                        
             _context.Messages.Add(mes);
             
             await _context.SaveChangesAsync();
@@ -135,6 +148,45 @@ namespace OddJobs.Controllers
                 .Select(t => t.InterestedUser).ToListAsync();
 
             return Ok(interestedUsers);
+        }
+
+        [HttpPut("api/{threadId:guid}")]
+        [Authorize]
+        public async Task<IActionResult> ReadMessage(Guid threadId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var thread = await _context.Threads.Include(t => t.JobOrder)
+                .Include(t=> t.InterestedUser).FirstOrDefaultAsync(t=> t.Id == threadId);
+
+            if (thread == null) return NotFound();
+            if (!(user.Id != thread.InterestedUser.Id || user.Id != thread.JobOrder.PrincipalId)) return Unauthorized();
+
+            if (user.Id == thread.InterestedUser.Id)
+            {
+                thread.InterestedUserRead = true;
+            }
+            else
+            {
+                thread.PrincipalRead = true;
+            }
+
+            await _context.SaveChangesAsync();
+            
+            return Ok();
+        }
+
+        [HttpGet("api/unread")]
+        [Authorize]
+        public async Task<IActionResult> UnreadMessages()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var threads = await _context.Threads.Include(t => t.JobOrder)
+                .Include(t => t.InterestedUser)
+                .Where(t => t.JobOrder.PrincipalId == user.Id && t.PrincipalRead == false ||
+                            t.InterestedUser.Id == user.Id && t.InterestedUserRead == false)
+                .ToListAsync();
+
+            return Ok(threads.Count);
         }
     }
 }
