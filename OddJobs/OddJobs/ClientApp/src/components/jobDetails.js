@@ -53,15 +53,19 @@ const JobDetails = (props) => {
                     setRerender(false);
                 }
             });
-        identity();
+        //console.log("priv " + roles);
     }, [rerender])
-    
-    
+
+    useEffect( () => {
+        identity();
+    },[])
 
     const identity = async() =>
     {
         const token = await authService.getAccessToken()
-        setRoles( await ((await fetch("jobOrder/fetchHighStatus/", {headers: !token ? {} : {'Authorization': `Bearer ${token}`}})).json()));
+        const res =  await ((await fetch("jobOrder/fetchHighStatus/", {headers: !token ? {} : {'Authorization': `Bearer ${token}`}})).json());
+        setRoles(res);
+        setRerender(true);
     }
 
     const findThread = async () => {
@@ -137,23 +141,34 @@ const JobDetails = (props) => {
     let status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light "}>Zlecenie aktualne</p>];
     if (Object.keys(job).length !== 0) {
         if (user !== null && user.sub === job.principalId) {
+           
             if (job.active) {
-                status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light"}>Zlecenie aktualne</p>]
+                status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light"}>Zlecenie
+                    aktualne</p>]
             } else {
-                status = [<p className={"w-100 p-2 mb-0 text-center custom-button-red text-light"}>Zlecenie nieaktywne</p>]
+                status = [<p className={"w-100 p-2 mb-0 text-center custom-button-red text-light"}>Zlecenie
+                    nieaktywne</p>]
             }
-            status.push( <Link to={`./${job.id}/edit`} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}>
-                        <FontAwesomeIcon className={"mr-1"} icon={faEdit}/>Edytuj zlecenie
-                       </Link>)
-            status.push( <Link onClick={changeStatus} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
-                        <FontAwesomeIcon className={"mr-1"} icon={faStarHalfAlt}/>Zmień status
-                       </Link>)
-            status.push(<Link className={"w-100 btn text-light"}  onClick={openAssignWorkerModal} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
-                <FontAwesomeIcon className={"mr-1"} icon={faUserCheck}/>Zleć użytkownikowi</Link>)
-            status.push(<Link className={"w-100 btn text-light"}  onClick={deleteJob}>
-                        <FontAwesomeIcon className={"mr-1"} icon={faTrash}/>Usuń zlecenie
-                       </Link>)
-            status.push(<AssignWorkerPopup modal={assignWorkerModal} setModal={setAssignWorkerModal} setRefresh={setRerender} jobId={job.id} user={user}/>)
+            if (job.reported===-1)  status.push(<p className={"w-100 p-2 mb-0 text-center  custom-button-red text-light"}>
+                <FontAwesomeIcon className={"mr-1"} icon={faExclamationTriangle}/>Oferta została zablokowana</p>)
+            else {
+                status.push(<Link to={`./${job.id}/edit`} className={"w-100 btn text-light"}
+                                  style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}>
+                    <FontAwesomeIcon className={"mr-1"} icon={faEdit}/>Edytuj zlecenie
+                </Link>)
+                status.push(<Link onClick={changeStatus} className={"w-100 btn text-light"}
+                                  style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}>
+                    <FontAwesomeIcon className={"mr-1"} icon={faStarHalfAlt}/>Zmień status
+                </Link>)
+                status.push(<Link className={"w-100 btn text-light"} onClick={openAssignWorkerModal}
+                                  style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}>
+                    <FontAwesomeIcon className={"mr-1"} icon={faUserCheck}/>Zleć użytkownikowi</Link>)
+                status.push(<Link className={"w-100 btn text-light"} onClick={deleteJob}>
+                    <FontAwesomeIcon className={"mr-1"} icon={faTrash}/>Usuń zlecenie
+                </Link>)
+                status.push(<AssignWorkerPopup modal={assignWorkerModal} setModal={setAssignWorkerModal}
+                                               setRefresh={setRerender} jobId={job.id} user={user}/>)
+            }
 
         }else{
             if (!job.active) {
@@ -170,7 +185,7 @@ const JobDetails = (props) => {
                         break;
                     case 1 : status[2] = <p className={"w-100 p-2 mb-0 text-center  custom-button-red text-light"}>
                         <FontAwesomeIcon className={"mr-1"} icon={faExclamationTriangle}/>Oferta została zgłoszona</p>
-                        if (roles) status[3] = makeDecisionButton();
+                        if (roles) status[4] = makeDecisionButton();
                         break;
                     case 2 : status[2] = <p className={"w-100 p-2 mb-0 text-center custom-button-green text-light"}>
                         <FontAwesomeIcon className={"mr-1"} icon={faCheckCircle}/>Oferta autoryzowana przez administrację</p>

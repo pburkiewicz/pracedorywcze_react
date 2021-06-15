@@ -61,9 +61,11 @@ namespace OddJobs.Controllers
         }
         
         [HttpGet("fetchHighStatus")]
+        [Authorize]
         public int FetchStatus()
         {
-            return User.IsInRole("Moderator") ? 1 : 0;
+            var ret = User.IsInRole("Moderator") ? 1 : 0;
+            return ret;
         }
         
         [HttpPut("ReportReaction/{id:int}/{status:int}")]
@@ -73,7 +75,11 @@ namespace OddJobs.Controllers
             var job = await _context.JobOrders.FindAsync(id);
             if (job == null) return NotFound();
             if (status == 1) job.Reported = 2;
-            else job.Active = false;
+            else
+            {
+                job.Reported = -1;
+                job.Active = false;
+            }
             await _context.SaveChangesAsync();
             return Ok();
         }
@@ -96,6 +102,7 @@ namespace OddJobs.Controllers
             if (job == null) return NotFound();
             var user = await _userManager.GetUserAsync(User);
             if (job.Principal != user) return Unauthorized();
+            if (job.Reported == -1) return Unauthorized();
             job.Title = jobForm.Title;
             job.Description = jobForm.Description;
             job.Latitude = jobForm.Lat;
@@ -128,6 +135,7 @@ namespace OddJobs.Controllers
             
             if (job == null) return NotFound();
             if(user.Id != job.PrincipalId) return Unauthorized();
+            if (job.Reported == -1) return Unauthorized();
             
             job.Active = !job.Active;
 
