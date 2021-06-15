@@ -207,8 +207,9 @@ function JobList (props) {
         return (adr['city']!==undefined ? adr['city'] + ' ': 
             (adr['village']!==undefined ? adr['village'] + " " :
             (adr['administrative']!==undefined ? adr['administrative'] + " " : "")))
+             +(adr['county']!==undefined ? adr['county'] + ' ' : "")
             + (adr['road']!==undefined ? adr['road'] + ' ' : "")
-            + (adr['house_number']!==undefined ? adr['house_number'] + ' ': "") + (adr['postcode']!==undefined ? adr['postcode'] : "");
+            + (adr['house_number']!==undefined ? adr['house_number'] + ' ': "") + (adr['postcode']!==undefined ? adr['postcode'] + " " : "");
     }
     
     const getLocation= async() =>
@@ -216,6 +217,7 @@ function JobList (props) {
         
         const response =  await fetch("https://nominatim.openstreetmap.org/search?q="+address+ "&format=json&country=pl&limit=1&addressdetails=1");
         const info =await response.json();
+        if (info[0]===undefined) return;
         setPosition([info[0]['lat'],info[0]['lon']]);
         setAddress(adrStr(info[0]['address']));
     }    
