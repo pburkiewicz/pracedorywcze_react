@@ -203,8 +203,12 @@ function JobList (props) {
     
     const adrStr = (adr) =>
     {
-        return (adr['city']!==undefined ? adr['city'] + ', ': (adr['village']!==undefined ? adr['village'] : null)) + (adr['road']!==undefined ? adr['road'] + ', ' : "")
-            + (adr['house_number']!==undefined ? adr['house_number'] + ', ': "") + (adr['postcode']!==undefined ? adr['postcode'] : "");
+        console.log(adr);
+        return (adr['city']!==undefined ? adr['city'] + ' ': 
+            (adr['village']!==undefined ? adr['village'] + " " :
+            (adr['administrative']!==undefined ? adr['administrative'] + " " : "")))
+            + (adr['road']!==undefined ? adr['road'] + ' ' : "")
+            + (adr['house_number']!==undefined ? adr['house_number'] + ' ': "") + (adr['postcode']!==undefined ? adr['postcode'] : "");
     }
     
     const getLocation= async() =>
@@ -217,7 +221,7 @@ function JobList (props) {
     }    
 
     const getPosition =async(pos) => {
-        const response =  await fetch("https://nominatim.openstreetmap.org/reverse?lat="+pos.coords.latitude+"&lon="+pos.coords.longitude + "&format=json&country=pl");
+        const response =  await fetch("https://nominatim.openstreetmap.org/reverse?lat="+pos.coords.latitude+"&lon="+pos.coords.longitude + "&format=json&country=pl&zoom=18");
         const info =await response.json();
         setAddress(adrStr(info['address']));
         console.log(info);
