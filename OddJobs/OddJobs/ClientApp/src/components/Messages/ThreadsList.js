@@ -95,6 +95,7 @@ const ThreadsList = () => {
     const columns = [ 
             {
                 // name: "Odebrane",
+                width: '5%',
                 center: true,
                 cell: (e) => {
                     console.log(e.message.thread.interestedUserRead);
@@ -109,7 +110,7 @@ const ThreadsList = () => {
             name: 'Wiadomość',
             selector: 'message.messageText',
             sortable: true,
-            width: "50%",
+            //width: "50%",
             cell: (e) =>{
                 let messageText = e.message.messageText;
                 if(messageText.length > 60) messageText = messageText.slice(0,60) + "...";
@@ -126,6 +127,7 @@ const ThreadsList = () => {
             name: 'Użytkownik',
             selector: 'correspondent.email',
             sortable: true,
+            width: '20%',
             cell: (e) => {
                 return `${e.correspondent.firstName} ${e.correspondent.lastName}`
             }
@@ -134,6 +136,7 @@ const ThreadsList = () => {
             name: 'Rodzaj',
             selector: (e) => {return user.sub == e.message.thread.jobOrder.principalId},
             sortable: true,
+            width: '20%',
             cell: (e) => {
                 if(user.sub == e.message.thread.jobOrder.principalId) {
                     return "Twoja oferta"
@@ -146,6 +149,7 @@ const ThreadsList = () => {
             name: 'Status',
             selector: 'message.thread.jobOrder.active',
             sortable: true,
+            width: '10%',
             center: true,
             cell: (e) => {
                 if(e.message.thread.jobOrder.active) {
@@ -160,6 +164,7 @@ const ThreadsList = () => {
             selector: 'message.sendTime',
             right: true,
             sortable: true,
+            width: '10%',
             cell: (e) => {
                 let lastMessageTime = new Date(e.message.sendTime);
                 let now = new Date();
