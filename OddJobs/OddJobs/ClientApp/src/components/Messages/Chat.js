@@ -4,10 +4,11 @@ import authService from "../api-authorization/AuthorizeService";
 import '../css/formStyle.css'
 import {Link, useHistory} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBriefcase, faUserCircle,faAt} from "@fortawesome/free-solid-svg-icons";
+import {faBriefcase, faUserCircle, faAt, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
 
 import '../css/messagesStyle.css';
 import '../css/formStyle.css';
+import Loading from "../Loading";
 
 const Chat = ({match}) => {
     const [textMessage, setTextMessage] = useState("");
@@ -23,12 +24,6 @@ const Chat = ({match}) => {
             method: 'GET',
             headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
         };
-        await fetch(`message/api/${match.params.id}/messages`, requestOptions)
-            .then(async response => {
-                let result = await response.json();
-                setMessages(result);
-                setUpdateMessages(false)
-            })
         
         await fetch(`message/api/${match.params.id}`, requestOptions)
             .then(async response => {
@@ -45,19 +40,25 @@ const Chat = ({match}) => {
                     if(!result.principalRead) {
                         await fetch(`message/api/${match.params.id}`, requestOptions)
                             .then(async response => response.ok ? console.log("Przeczytano") : console.log(response));
-                        
+
                     }
-                    
-                }else if(user.sub === result.interestedUser.Id){
+
+                }else if(user.sub === result.interestedUser.id){
                     if(!result.interestedUserRead){
                         await fetch(`message/api/${match.params.id}`, requestOptions)
                             .then(async response => response.ok ? console.log("Przeczytano") : console.log(response));
                     }
                 }
-                    
+
             });
+        requestOptions.method = "GET";
+        await fetch(`message/api/${match.params.id}/messages`, requestOptions)
+            .then(async response => {
+                let result = await response.json();
+                setMessages(result);
+                setUpdateMessages(false)
+            })
         
-            
     }
 
     useEffect( async () => {
@@ -102,6 +103,7 @@ const Chat = ({match}) => {
         oldDate = new Date(messages[0].sendTime).toLocaleDateString();    
     }
 
+    if(!thread) return <Loading text={" wiadomości"} />
     
     return (
         <Row className="d-flex justify-content-center w-100 mt-3 text-light job-details">
@@ -120,6 +122,31 @@ const Chat = ({match}) => {
                                 }
                                 let time = new Date(item.sendTime).toLocaleTimeString().slice(0, 5);
                                 let date = new Date(item.sendTime).toLocaleDateString();
+                                console.log( user.sub );
+                                console.log(thread.interestedUser.id)
+                                console.log(thread)
+                                console.log( user.sub === thread.interestedUser.id)
+                                if(item.specialMessage) {
+                                    if (user.sub == thread.interestedUser.id){
+                                        return <div className={"d-flex pl-3 pr-3 mt-2 mb-2 " + flex}>
+                                            <div>
+                                                {/*<small className={"text-secondary"}>{time}</small>*/}
+                                                <div className="w-100 d-flex align-items-center">
+                                                    <div className="alert alert-success w-75 mx-auto bg-dark" role="alert">
+                                                        <Row className={"pt-1 pb-1"}>
+                                                            <Col sm={2}>
+                                                                <FontAwesomeIcon icon={faThumbsUp} size={"3x"} className="mx-auto" color={"#4aba70"}/>
+                                                            </Col>
+                                                            <Col sm={10}>
+                                                                <p className={"text-light mb-0"}>Cześć! Obserwowane przez Ciebie zlecenie zostało przypisane właśnie Tobie!</p>
+                                                            </Col>
+                                                        </Row>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    } return;
+                                }
                                 if(oldDate === date) {
                                     return <div className={"d-flex pl-3 pr-3 mt-2 mb-2 " + flex}>
                                         <div><small className={"text-secondary"}>{time}</small>
@@ -137,20 +164,26 @@ const Chat = ({match}) => {
                                     </div>
                                 }else{
                                     oldDate = date
-                                    return <><div className={"d-flex pl-3 pr-3 mt-2 mb-2 justify-content-center"}><small className={"mx-auto text-secondary"}>{date}</small></div><div className={"d-flex pl-3 pr-3 mt-2 mb-2 " + flex}>
-                                        <div><small className={"text-secondary"}>{time}</small>
-                                            <div className={"d-flex  " + flex}>
-                                                <div>
-                                                    <Row className={"m-0 p-0"}>
-                                                        <p className={messageClass + " pr-3 pl-3 pt-2 pb-2 mb-0"}>{item.messageText}</p>
-                                                    </Row>
-                                                    <Row className={"m-0 p-0 " + float }>
-                                                        <span className={messageClass +"  triangle"}></span>
-                                                    </Row>
+                                    return <>
+                                        <div className={"d-flex pl-3 pr-3 mt-2 mb-2 justify-content-center"}>
+                                            <small className={"mx-auto text-secondary"}>{date}</small>
+                                        </div>
+                                        <div className={"d-flex pl-3 pr-3 mt-2 mb-2 " + flex}>
+                                            <div>
+                                                <small className={"text-secondary"}>{time}</small>
+                                                <div className={"d-flex  " + flex}>
+                                                    <div>
+                                                        <Row className={"m-0 p-0"}>
+                                                            <p className={messageClass + " pr-3 pl-3 pt-2 pb-2 mb-0"}>{item.messageText}</p>
+                                                        </Row>
+                                                        <Row className={"m-0 p-0 " + float }>
+                                                            <span className={messageClass +"  triangle"}></span>
+                                                        </Row>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div></>
+                                    </>
                                 }
                             })
                         }

@@ -159,10 +159,23 @@ namespace OddJobs.Controllers
             if(user.Id != job.PrincipalId) return Unauthorized();
 
             var worker = await _context.ApplicationUsers.FindAsync(workerId);
+
+            var thread = await _context.Threads.Include(t => t.JobOrder)
+                .Where(t => t.JobOrder.ID == job.ID && t.InterestedUser.Id == workerId).FirstOrDefaultAsync();
             
             job.Active = false;
             job.Worker = worker;
             job.WorkerId = workerId;
+
+            thread.InterestedUserRead = false;
+            await _context.Messages.AddAsync(new Message()
+            {
+                MessageText = "",
+                Sender = user,
+                SendTime = DateTime.Now,
+                Thread = thread,
+                SpecialMessage = true
+            });
             
             await _context.SaveChangesAsync();
             return Ok();
@@ -247,6 +260,7 @@ namespace OddJobs.Controllers
                 Thread = thread,
                 SendTime = DateTime.Now,
                 Sender = user,
+                SpecialMessage = false
             };
             
             _context.Threads.Add(thread);

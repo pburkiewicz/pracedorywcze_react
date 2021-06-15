@@ -21,5 +21,7 @@ namespace OddJobs.Models
         
         [Required]
         public DateTime SendTime { get; set; }
+        
+        public bool SpecialMessage { get; set; }
     }
 }

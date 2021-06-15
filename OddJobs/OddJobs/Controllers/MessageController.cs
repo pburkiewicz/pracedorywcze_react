@@ -97,6 +97,7 @@ namespace OddJobs.Controllers
                 Thread = thread,
                 SendTime = DateTime.Now,
                 Sender = user,
+                SpecialMessage = false
             };
                         
             _context.Messages.Add(mes);
