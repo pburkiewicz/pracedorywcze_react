@@ -63,6 +63,8 @@ const Chat = ({match}) => {
     useEffect( async () => {
         setUser(await authService.getUser());
         await fetchMessages();
+        const el = document.getElementById('scrollBox');
+        el.scrollTo(0,el.scrollHeight);
     }, [updateMessages])
     
     const sendMessage = async (event) => {
@@ -105,9 +107,9 @@ const Chat = ({match}) => {
         <Row className="d-flex justify-content-center w-100 mt-3 text-light job-details">
             <Col md={7} className={" p-3 job-card"}>
                 <Row className={"pt-0 pb-1"}>
-                    <div className={"ml-3 mr-3 w-100 pl-0 pr-0 rounded overflow-auto message-box"} style={{backgroundColor: "#222831", minHeight: "300px", maxHeight: "500px"}}>
+                    <div id="scrollBox" className={"ml-3 mr-3 w-100 pl-0 pr-0 rounded overflow-auto message-box"} style={{backgroundColor: "#222831", minHeight: "300px", maxHeight: "500px"}}>
                         {
-                            messages && messages.length && messages.map((item, index) => {
+                            messages && messages.length && messages.slice(0).reverse().map((item, index) => {
                                 let messageClass = "receive";
                                 let flex = "flex-row"
                                 let float = "float-left"
