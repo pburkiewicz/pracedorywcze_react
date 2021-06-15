@@ -1,6 +1,6 @@
 ﻿import React, {useState, useEffect} from 'react'
 import {Link, useHistory} from "react-router-dom";
-import {Button, Col, Row} from "reactstrap";
+import {Button, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row} from "reactstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faHandHoldingUsd,
@@ -35,7 +35,8 @@ const JobDetails = (props) => {
     const [modal, setModal] = useState(false);
     const [roles, setRoles] = useState(0);
     const [rerender,setRerender] = useState(true);
-   
+    const [deleteJobModal, setDeleteJobModal] = useState(false);
+    
     useEffect( () => {
         (async () => {
             setUser(await authService.getUser());
@@ -138,6 +139,19 @@ const JobDetails = (props) => {
         })
     }
     
+    const deleteModal = (
+        <Modal isOpen={deleteJobModal} toggle={() => setDeleteJobModal(false)} className={"text-light"} rounded>
+            <ModalHeader className={"bg-dark border-bottom border-secondary"} toggle={() => setDeleteJobModal(false)}>Usuń zlecenie</ModalHeader>
+            <ModalBody className={"bg-dark"}>
+                Czy na pewno chcesz usunąć zlecenie? Dane zostaną utracone bezpowrotnie.
+            </ModalBody>
+            <ModalFooter  className={"bg-dark border-top border-secondary"}>
+                <Button className="btn custom-button-red" onClick={deleteJob}>Tak</Button>
+                <Button style={{backgroundColor: "#212529", borderColor: "#212529"}} onClick={() => setDeleteJobModal(false)}>Nie</Button>
+            </ModalFooter>
+        </Modal>
+    )
+    
     let status = [<p className={"w-100 p-2 mb-0 text-center custom-button-green text-light "}>Zlecenie aktualne</p>];
     if (Object.keys(job).length !== 0) {
         if (user !== null && user.sub === job.principalId) {
@@ -163,17 +177,18 @@ const JobDetails = (props) => {
                 status.push(<Link className={"w-100 btn text-light"} onClick={openAssignWorkerModal}
                                   style={{borderBottomColor: "#6c757d", paddingBottom: "9px"}}>
                     <FontAwesomeIcon className={"mr-1"} icon={faUserCheck}/>Zleć użytkownikowi</Link>)
-                status.push(<Link className={"w-100 btn text-light"} onClick={deleteJob}>
+                status.push(<Link className={"w-100 btn text-light"} onClick={() => setDeleteJobModal(true)}>
                     <FontAwesomeIcon className={"mr-1"} icon={faTrash}/>Usuń zlecenie
                 </Link>)
                 status.push(<AssignWorkerPopup modal={assignWorkerModal} setModal={setAssignWorkerModal}
                                                setRefresh={setRerender} jobId={job.id} user={user}/>)
+                status.push(deleteModal)
             }
 
         }else{
             if (!job.active) {
-                status = [<Button active={false} size="lg" block style={{backgroundColor: "#d9534f"}}>Zlecenie jest już
-                    nieaktualne</Button>]
+                status = [<p className={"w-100 p-2 mb-0 text-center  custom-button-red text-light"}>Zlecenie jest już
+                    nieaktualne</p>]
             }
             if(user !== null){
                 status[1] = <Link onClick={findThread} className={"w-100 btn text-light"} style={{borderBottomColor: "#6c757d", paddingBottom: "9px" }}>
