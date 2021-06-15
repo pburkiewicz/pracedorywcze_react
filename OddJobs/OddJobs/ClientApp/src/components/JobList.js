@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import authService from "./api-authorization/AuthorizeService";
 import {Col} from "reactstrap";
 import Loading from "./Loading";
+import adrStr from "./Format/adrStr";
 
 
 function JobList (props) {
@@ -201,16 +202,6 @@ function JobList (props) {
         setRoles( await ((await fetch("jobOrder/fetchHighStatus/", {headers: !token ? {} : {'Authorization': `Bearer ${token}`}})).json()));
     }
     
-    const adrStr = (adr) =>
-    {
-        console.log(adr);
-        return (adr['city']!==undefined ? adr['city'] + ' ': 
-            (adr['village']!==undefined ? adr['village'] + " " :
-            (adr['administrative']!==undefined ? adr['administrative'] + " " : "")))
-             +(adr['county']!==undefined ? adr['county'] + ' ' : "")
-            + (adr['road']!==undefined ? adr['road'] + ' ' : "")
-            + (adr['house_number']!==undefined ? adr['house_number'] + ' ': "") + (adr['postcode']!==undefined ? adr['postcode'] + " " : "");
-    }
     
     const getLocation= async() =>
     {

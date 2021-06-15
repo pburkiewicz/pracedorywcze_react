@@ -6,6 +6,8 @@ import 'leaflet.locatecontrol';
 import 'leaflet-geosearch/dist/geosearch.css';
 import * as GeoSearch from "leaflet-geosearch";
 import GeocoderControl from "leaflet-control-geocoder";
+import authService from "./api-authorization/AuthorizeService";
+import adrStr from "./Format/adrStr";
 
 class FormMap extends React.Component {
     constructor(props) {
@@ -29,7 +31,7 @@ class FormMap extends React.Component {
         
         // this.mapBox.locate({setView : true});
         
-        const geocoder = GeocoderControl.nominatim();
+        //const geocoder = GeocoderControl.nominatim();
         
         L.control.locate().addTo(this.mapBox);
         const provider = new GeoSearch.OpenStreetMapProvider()
@@ -71,15 +73,24 @@ class FormMap extends React.Component {
                 this.removeLayer(marker);
             }
             marker = new L.marker(e.latlng, {icon: greenIcon});
+            console.log(e.latlng);
             this.addLayer(marker);
-            geocoder.reverse(L.latLng(e.latlng), this.options.crs.scale(this.getZoom()), async result=>{
-                if( result.length !== 0 ) {
-                    console.log(main.props);
-                    main.props.setAddress(result[0].name);
-                    main.props.setCoordinates(e.latlng);
-                    search.container.firstChild[0].value = result[0].name
-                }
-            })
+            //geocoder.reverse(L.latLng(e.latlng), this.options.crs.scale(this.getZoom()), async result=>{
+            //     if( result.length !== 0 ) {
+            //         // console.log(main.props);
+            //         main.props.setAddress(result[0].name);
+            //         main.props.setCoordinates(e.latlng);
+            //         search.container.firstChild[0].value = result[0].name
+            //     }
+
+            (async () => {
+                const response = await fetch("https://nominatim.openstreetmap.org/reverse?lat="+e.latlng.lat+"&lon="+e.latlng.lng + "&format=json&country=pl&zoom=18")
+                const result = await response.json();
+                main.props.setCoordinates(e.latlng);
+                const adr = adrStr(result['address'])
+                main.props.setAddress(adr);
+                search.container.firstChild[0].value = adr;
+            })();
         });
     }
 
